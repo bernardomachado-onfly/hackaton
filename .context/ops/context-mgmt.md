@@ -77,6 +77,15 @@
 4. **`_source/` é imutável** — apenas adicionar, nunca editar ou deletar.
 5. **`MASTER.md` deve refletir o estado atual** — quando `estado-atual.md` mudar, atualizar MASTER.md também.
 
+## Trabalho paralelo (múltiplos agentes/pessoas)
+
+Quando o time trabalha em paralelo no mesmo repo:
+
+- Cada agente atualiza apenas a seção de `estado-atual.md` correspondente à sua feature.
+- Nenhum agente reescreve seções que não são de sua responsabilidade.
+- Conflitos de merge em `estado-atual.md` são resolvidos **manualmente pelo humano** antes do próximo commit — nunca pelo agente.
+- Em caso de dúvida sobre o estado real do projeto, rodar `git log --oneline -5` antes de começar.
+
 ---
 
 ## Como registrar feature implementada

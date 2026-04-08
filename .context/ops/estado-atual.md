@@ -3,6 +3,8 @@
 > Fonte da verdade corrente. Atualizar a cada decisão importante.
 > Última atualização: 2026-04-08
 
+**PROGRESSO: 0% — Nenhum código implementado. Apenas contexto e specs prontos.**
+
 ---
 
 ## Decisão principal

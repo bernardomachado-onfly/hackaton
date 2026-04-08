@@ -11,6 +11,11 @@ Antes de qualquer tarefa, leia:
 1. `.context/MASTER.md` — contexto completo em XML (empresa, ideia, jurados, stack)
 2. `.context/ops/estado-atual.md` — decisões tomadas e status atual
 
+Antes de implementar qualquer feature, leia também:
+
+3. `.context/specs/features/travel-assistant/tasks.md` — tasks com código inicial já definido
+4. `.context/specs/features/travel-assistant/design.md` — arquitetura e decisões tomadas
+
 ---
 
 ## Contexto do projeto
