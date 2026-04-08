@@ -25,7 +25,7 @@ export function Header({ trip }: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <span className={styles.logo}>✈️</span>
+        <span className={styles.logo}>🤖</span>
         <span className={styles.title}>Travel Assistant</span>
         <span className={styles.badge}>by Onfly</span>
       </div>
