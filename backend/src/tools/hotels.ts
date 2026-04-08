@@ -157,20 +157,38 @@ export async function searchHotels(input: ToolInput, context: ToolContext = {}) 
   const hotelsList = quoteData.response.data || [];
 
   const results = hotelsList.map((hotel: any) => {
-    const priceInCentavos = hotel.cheapestTotalPrice || 0;
-    const totalPrice = priceInCentavos / 100;
-    const pricePerNight = nights > 0 ? Math.round((totalPrice / nights) * 100) / 100 : totalPrice;
+    // Price fields: cheapestPrice (total in centavos), cheapestDailyPrice (per night in centavos)
+    const totalCentavos = hotel.cheapestPrice || hotel.cheapestTotalPrice || 0;
+    const dailyCentavos = hotel.cheapestDailyPrice || 0;
+    const totalPrice = totalCentavos / 100;
+    const pricePerNight = dailyCentavos > 0
+      ? dailyCentavos / 100
+      : (nights > 0 ? Math.round((totalPrice / nights) * 100) / 100 : totalPrice);
+
+    // Address: can be object { street, number, district, addressLine } or string
+    const address = typeof hotel.address === 'object' && hotel.address
+      ? hotel.address.addressLine || `${hotel.address.street || ''}, ${hotel.address.number || ''} - ${hotel.address.district || ''}`
+      : hotel.address || '';
+
+    // Amenities: array of { code, label } objects
+    const amenities = (hotel.amenities || [])
+      .map((a: any) => typeof a === 'string' ? a : a.label || a.name || '')
+      .filter((a: string) => a.length > 0);
 
     return {
       id: hotel.id || '',
       name: hotel.name || '',
-      address: hotel.address || '',
+      address,
       city,
       rating: hotel.stars || hotel.rating || 0,
+      score: hotel.score || 0,
       pricePerNight,
       totalPrice,
       currency: 'BRL',
-      amenities: (hotel.amenities || []).map((a: any) => typeof a === 'string' ? a : a.name || ''),
+      amenities,
+      breakfast: hotel.breakfast || false,
+      refundable: hotel.refundable || false,
+      thumb: hotel.thumb || '',
       checkin,
       checkout,
       _booking: {
