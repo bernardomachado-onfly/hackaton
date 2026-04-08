@@ -53,7 +53,8 @@
 ```
 [ ] Ler MASTER.md (entry point — carrega tudo)
 [ ] Ler ops/estado-atual.md (fonte da verdade corrente)
-[ ] Verificar se há código novo no repo não refletido nos contextos
+[ ] git log --oneline -5 (verificar código novo não refletido nos contextos)
+[ ] Verificar branch atual — se for main, criar feature/nome-funcional antes de codar
 [ ] Corrigir conflitos antes de começar nova tarefa
 ```
 

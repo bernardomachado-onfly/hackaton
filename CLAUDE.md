@@ -15,6 +15,7 @@ Antes de implementar qualquer feature, leia também:
 
 3. `.context/specs/features/travel-assistant/tasks.md` — tasks com código inicial já definido
 4. `.context/specs/features/travel-assistant/design.md` — arquitetura e decisões tomadas
+5. `.context/ops/git-flow.md` — criar branch `feature/nome-funcional` antes de codar
 
 ---
 
