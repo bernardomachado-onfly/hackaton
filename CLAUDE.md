@@ -48,9 +48,13 @@ corporativas completas via chat (aéreo → hotel → confirmação).
 
 ## Atualizar contexto ao longo do trabalho
 
-- A cada feature implementada → atualizar `.context/ops/estado-atual.md`
+- A cada feature implementada → atualizar `.context/ops/estado-atual.md` **e** `README.md`
 - A cada decisão importante → registrar em `.context/ops/estado-atual.md`
-- Protocolo completo em `.context/ops/context-mgmt.md`
+- Protocolo de contexto: `.context/ops/context-mgmt.md`
+- Protocolo do README: `.context/ops/readme-mgmt.md` — ler antes de qualquer commit
+
+> O README.md deve sempre refletir o estado real do projeto.
+> Nunca commitar sem verificar se o README está sincronizado.
 
 ---
 
