@@ -1,5 +1,5 @@
 import type { ToolInput } from './index.js';
-import { sessionStore } from '../services/session.js';
+import { sessionStore, bookingStore } from '../services/session.js';
 import { getOnflyToken, refreshOnflyToken } from '../services/onfly-auth.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -68,7 +68,23 @@ export async function createBooking(input: ToolInput) {
   if (!token || !bookingData?.quoteId) {
     console.log('⚠️ [Booking] Sem token ou dados de booking, usando mock');
     const bookingId = `BK-${uuidv4().slice(0, 8).toUpperCase()}`;
-    sessionStore.updateTrip(sessionId, { status: 'confirmed' });
+    sessionStore.updateTrip(sessionId, { status: 'confirmed', bookingCode: bookingId });
+
+    const flight = session.trip.flight;
+    bookingStore.set(bookingId, {
+      bookingCode: bookingId,
+      origin: session.trip.origin || flight?.origin || 'GRU',
+      originCity: session.trip.origin || flight?.origin || 'São Paulo',
+      destination: session.trip.destination || flight?.destination || 'BSB',
+      destCity: session.trip.destination || flight?.destination || 'Brasília',
+      flightNumber: flight?.flightNumber || 'N/A',
+      date: session.trip.departureDate || new Date().toISOString().slice(0, 10),
+      time: flight?.departureTime || '00:00',
+      gate: 'B12',
+      seat: '14A',
+      passenger: traveler ? `${traveler.firstName} ${traveler.lastName}` : 'Viajante',
+      bookingClass: flight?.class || 'Economy',
+    });
 
     return {
       success: true,
@@ -202,12 +218,29 @@ export async function createBooking(input: ToolInput) {
     const reserveResult = await reserveResponse.json();
     console.log('✅ [Booking] Reserva criada com sucesso!');
 
-    sessionStore.updateTrip(sessionId, { status: 'confirmed' });
+    const onflyBookingId: string = String((reserveResult as any).id || cartItemId);
+    sessionStore.updateTrip(sessionId, { status: 'confirmed', bookingCode: onflyBookingId });
+
+    const onflyFlight = session.trip.flight;
+    bookingStore.set(onflyBookingId, {
+      bookingCode: onflyBookingId,
+      origin: session.trip.origin || onflyFlight?.origin || 'GRU',
+      originCity: session.trip.origin || onflyFlight?.origin || 'São Paulo',
+      destination: session.trip.destination || onflyFlight?.destination || 'BSB',
+      destCity: session.trip.destination || onflyFlight?.destination || 'Brasília',
+      flightNumber: onflyFlight?.flightNumber || 'N/A',
+      date: session.trip.departureDate || new Date().toISOString().slice(0, 10),
+      time: onflyFlight?.departureTime || '00:00',
+      gate: 'B12',
+      seat: '14A',
+      passenger: traveler ? `${traveler.firstName} ${traveler.lastName}` : 'Viajante',
+      bookingClass: onflyFlight?.class || 'Economy',
+    });
 
     return {
       success: true,
       source: 'onfly',
-      bookingId: (reserveResult as any).id || cartItemId,
+      bookingId: onflyBookingId,
       quoteId,
       message: 'Reserva criada com sucesso na Onfly!',
       details: {
@@ -226,7 +259,23 @@ export async function createBooking(input: ToolInput) {
 
     // Fallback to mock
     const bookingId = `BK-${uuidv4().slice(0, 8).toUpperCase()}`;
-    sessionStore.updateTrip(sessionId, { status: 'confirmed' });
+    sessionStore.updateTrip(sessionId, { status: 'confirmed', bookingCode: bookingId });
+
+    const fallbackFlight = session.trip.flight;
+    bookingStore.set(bookingId, {
+      bookingCode: bookingId,
+      origin: session.trip.origin || fallbackFlight?.origin || 'GRU',
+      originCity: session.trip.origin || fallbackFlight?.origin || 'São Paulo',
+      destination: session.trip.destination || fallbackFlight?.destination || 'BSB',
+      destCity: session.trip.destination || fallbackFlight?.destination || 'Brasília',
+      flightNumber: fallbackFlight?.flightNumber || 'N/A',
+      date: session.trip.departureDate || new Date().toISOString().slice(0, 10),
+      time: fallbackFlight?.departureTime || '00:00',
+      gate: 'B12',
+      seat: '14A',
+      passenger: traveler ? `${traveler.firstName} ${traveler.lastName}` : 'Viajante',
+      bookingClass: fallbackFlight?.class || 'Economy',
+    });
 
     return {
       success: true,
