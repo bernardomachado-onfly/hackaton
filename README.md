@@ -59,6 +59,34 @@ Usuário envia mensagem
 
 O usuário pode retomar uma conversa incompleta — se já selecionou o voo, o agente sugere continuar com o hotel.
 
+### Datas relativas
+
+O frontend envia o **timezone** do navegador (via `Intl.DateTimeFormat`) em cada requisição. O backend injeta a data/hora atual no system prompt do Claude, permitindo resolver expressões como:
+
+| O usuário diz | O agente entende |
+|---------------|-----------------|
+| "amanhã" | dia seguinte (ex: 09/04/2026) |
+| "segunda" | próxima segunda-feira |
+| "semana que vem" | +7 dias |
+| "depois de amanhã" | +2 dias |
+| "daqui a 3 dias" | +3 dias |
+
+O agente **confirma a data absoluta** antes de buscar: *"Entendi, amanhã dia 09/04, correto?"*
+
+Ao chamar as tools (`search_flights`, `search_hotels`), as datas já são enviadas no formato `YYYY-MM-DD` — nunca como texto relativo.
+
+### Detecção de idioma
+
+O agente detecta automaticamente o idioma do usuário e responde no mesmo:
+
+| Usuário escreve em | Agente responde em |
+|--------------------|--------------------|
+| Português | Português (BR) |
+| English | English |
+| Español | Español |
+
+O idioma é mantido durante toda a conversa. Se o usuário trocar de idioma, o agente acompanha.
+
 ---
 
 ## Arquitetura
