@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { toolDefinitions, executeTool, type ToolContext } from '../tools/index.js';
-import { sessionStore, type Session, type FlightOption, type HotelOption } from './session.js';
+import { sessionStore, bookingStore, type Session, type FlightOption, type HotelOption } from './session.js';
 
 const USE_CLAUDE = !!process.env.ANTHROPIC_API_KEY;
 const client = USE_CLAUDE ? new Anthropic() : null;
@@ -412,9 +412,26 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
         callbacks.onToolResult('create_booking');
 
         const booking = JSON.parse(bookingResult);
-        sessionStore.updateTrip(session.id, { status: 'confirmed' });
+        const bookingCode = booking.bookingId as string;
+        sessionStore.updateTrip(session.id, { status: 'confirmed', bookingCode });
 
-        await streamText(`🎉 **Reserva confirmada!**\n\n📋 Código da reserva: **${booking.bookingId}**\n\n`);
+        // Populate bookingStore so the pass page can render the boarding pass
+        bookingStore.set(bookingCode, {
+          bookingCode,
+          origin: session.trip.flight?.origin || session.trip.origin || 'GRU',
+          originCity: session.trip.origin || 'São Paulo',
+          destination: session.trip.flight?.destination || session.trip.destination || 'GIG',
+          destCity: session.trip.destination || 'Rio de Janeiro',
+          flightNumber: session.trip.flight ? `${session.trip.flight.airline} ${session.trip.flight.flightNumber}` : 'N/A',
+          date: session.trip.departureDate || '',
+          time: session.trip.flight?.departureTime || '',
+          gate: 'A12',
+          seat: '14A',
+          passenger: 'Passageiro',
+          bookingClass: 'Economy',
+        });
+
+        await streamText(`🎉 **Reserva confirmada!**\n\n📋 Código da reserva: **${bookingCode}**\n\n`);
         if (session.trip.flight) {
           await streamText(`✈️ ${session.trip.flight.airline} ${session.trip.flight.flightNumber}\n`);
         }
@@ -600,7 +617,22 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
         lastHotelResults: result.results || [],
       });
     } else if (toolName === 'create_booking') {
-      sessionStore.updateTrip(session.id, { status: 'confirmed' });
+      const bookingCode = (result.bookingId || result.booking_id || `BK-${Date.now()}`) as string;
+      sessionStore.updateTrip(session.id, { status: 'confirmed', bookingCode });
+      bookingStore.set(bookingCode, {
+        bookingCode,
+        origin: session.trip.flight?.origin || session.trip.origin || 'GRU',
+        originCity: session.trip.origin || 'São Paulo',
+        destination: session.trip.flight?.destination || session.trip.destination || 'GIG',
+        destCity: session.trip.destination || 'Rio de Janeiro',
+        flightNumber: session.trip.flight ? `${session.trip.flight.airline} ${session.trip.flight.flightNumber}` : 'N/A',
+        date: session.trip.departureDate || '',
+        time: session.trip.flight?.departureTime || '',
+        gate: 'A12',
+        seat: '14A',
+        passenger: 'Passageiro',
+        bookingClass: 'Economy',
+      });
     }
   } catch {
     // ignore parse errors
