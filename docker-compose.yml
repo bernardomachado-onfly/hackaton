@@ -11,7 +11,7 @@ services:
       NODE_ENV: production
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       CORS_ORIGINS: http://fingeseronfly.com.br,https://fingeseronfly.com.br,http://www.fingeseronfly.com.br,https://www.fingeseronfly.com.br,http://page.fingeseronfly.com.br,https://page.fingeseronfly.com.br
-    restart: unless-stopped
+    restart: always
     networks:
       - internal
     healthcheck:
@@ -31,7 +31,7 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
     networks:
       - internal
     healthcheck:
@@ -46,7 +46,7 @@ services:
     container_name: hackaton-landing
     ports:
       - "3003:80"
-    restart: unless-stopped
+    restart: always
     networks:
       - internal
     healthcheck:
@@ -64,7 +64,7 @@ services:
     volumes:
       - npm_data:/data
       - npm_letsencrypt:/etc/letsencrypt
-    restart: unless-stopped
+    restart: always
     networks:
       - internal
 
