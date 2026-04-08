@@ -8,40 +8,27 @@ Repositório do time para o Hackathon Onfly — 100% IA.
 
 ## Status atual
 
-**Fase:** Pré-desenvolvimento — contexto estratégico completo, MVP a definir
-**Recomendação principal:** Policy Audit Agent + Onfly Zero (combinação)
-**Próximo passo:** Definir MVP e iniciar implementação
+**Fase:** Desenvolvimento
+**Ideia selecionada:** Onfly Copilot v3 — agente conversacional de reservas
+**Stack:** Node.js + TypeScript + Claude API + React + Express + SSE
+**Próximo passo:** Implementar AgentService + Tools conforme `.specs/`
 
 ---
 
 ## Ideia principal
 
-**Policy Audit Agent + Onfly Zero**
-
-O expense management da Onfly é 100% manual hoje. A combinação resolve a jornada completa:
-
-- **Onfly Zero** — viajante tira foto do recibo no WhatsApp → agente extrai, categoriza e submete automaticamente. Zero app, zero formulário.
-- **Policy Audit Agent** — agente audita a despesa em tempo real antes da aprovação, detecta violações de política, dá score de risco ao aprovador, transforma dashboard passivo em insights acionáveis.
+**Onfly Copilot v3** — agente conversacional que executa reservas corporativas completas via chat.
 
 ```
-Foto no WhatsApp → capturado → validado → aprovado
-Do recibo à aprovação: ~45 segundos. Sem toque humano.
+"Preciso ir a SP terça e voltar quinta"
+→ agente busca voos, apresenta opções, busca hotel, confirma booking
+→ Do zero à reserva: 30 segundos. Sem formulário, sem navegação.
 ```
 
----
+**Narrativa de pitch:**
+> "A v2 falhou porque os LLMs não eram bons o suficiente. Agora com Claude, finalmente funciona."
 
-## Ideias rankeadas
-
-| # | Ideia | Score | Status |
-|---|---|---|---|
-| 1 | Policy Audit Agent | 42/50 | Recomendada |
-| 2 | Onfly Forecast | 41/50 | Recomendada (combo) |
-| 3 | Onfly Zero | 44/50 | Recomendada |
-| 4 | Onfly AutoConfig | 40/50 | Backup |
-| 5 | Onfly Concilia | 38/50 | Backup |
-| 6 | Onfly Copilot v3 | 38/50 | Ressalvas |
-| 7 | Carbon Travel | 33/50 | Descartada |
-| 8 | Smart Rebooking | 30/50 | Descartada (VOLL já tem) |
+**Gap competitivo:** nenhum player mid-market BR tem booking conversacional end-to-end.
 
 ---
 
@@ -49,53 +36,70 @@ Do recibo à aprovação: ~45 segundos. Sem toque humano.
 
 | Feature | Data | Arquivos | Status |
 |---|---|---|---|
-| — | — | — | Em planejamento |
+| Contextos estratégicos | 2026-04-08 | `.context/` | ✅ Completo |
+| Specs técnicas | 2026-04-08 | `.specs/` | ✅ Completo |
 
 ---
 
 ## Estrutura do repositório
 
 ```
-hackaton/
-├── README.md                    ← este arquivo (sempre atualizado)
-├── .context/                    ← contexto estratégico completo
-│   ├── 00-estado-atual.md       ← fonte da verdade corrente
-│   ├── 01-produto-onfly.md      ← o que a Onfly já tem (não repetir)
-│   ├── 02-concorrentes.md       ← análise competitiva BR/MX/global
-│   ├── 03-ideias.md             ← top 5 ideias com anotações
-│   ├── 04-plataforma.md         ← observações da plataforma por dentro
-│   ├── 05-monitor.md            ← feedback do monitor
-│   ├── 06-perfil-socios.md      ← psicologia dos 3 jurados
-│   ├── 07-novas-ideias.md       ← 3 novas ideias (rodada 2)
-│   ├── 08-prompt-engineering.md ← boas práticas Anthropic
-│   ├── 09-meta-prompt.md        ← meta-prompt para usar em sessões
-│   ├── 10-context-management.md ← protocolo de atualização de contexto
-│   ├── RELATORIO_FINAL_IDEIAS.md← relatório completo com scoring
-│   └── _source/                 ← documentos originais (imutável)
+hackathon/
+├── README.md                       ← este arquivo
+├── CONTEXT_DOC.md                  ← índice e guia dos contextos
+├── .context/                       ← contexto estratégico completo
+│   ├── MASTER.md                   ← entry point XML (ler primeiro)
+│   ├── deep/                       ← análises profundas
+│   │   ├── empresa.md              ← stack atual + o que não repetir
+│   │   ├── concorrentes.md         ← análise BR/MX/global
+│   │   ├── jurados.md              ← psicologia dos 3 fundadores
+│   │   ├── ideias.md               ← ranking completo rodadas 1 e 2
+│   │   └── recomendacao.md         ← relatório final + pitch
+│   ├── ops/                        ← operacional
+│   │   ├── estado-atual.md         ← fonte da verdade corrente
+│   │   ├── plataforma.md           ← observações + feedback monitor
+│   │   └── context-mgmt.md        ← protocolo de atualização
+│   ├── prompts/                    ← prompts prontos
+│   │   ├── meta-prompt.md          ← system prompt para novas sessões
+│   │   └── eng-prompt.md           ← boas práticas Anthropic
+│   └── _source/                    ← documentos originais (imutável)
 │       ├── arch-v2.md
 │       └── ARCHITECTURE.md
-└── src/                         ← código (a criar)
+├── .specs/                         ← especificações técnicas
+│   ├── project/
+│   │   ├── PROJECT.md              ← visão, escopo, stack
+│   │   └── ROADMAP.md              ← linha do tempo 8h
+│   └── features/
+│       └── travel-assistant/
+│           ├── spec.md             ← user stories P1/P2
+│           ├── design.md           ← arquitetura, models, tools
+│           └── tasks.md            ← tasks com código inicial
+└── src/                            ← código (a implementar)
 ```
 
 ---
 
+## Como iniciar o desenvolvimento
+
+1. Ler `.specs/features/travel-assistant/tasks.md` — tasks com código inicial
+2. Seguir a ordem do `.specs/project/ROADMAP.md`
+3. Consultar `.specs/features/travel-assistant/design.md` para arquitetura
+
 ## Como usar o contexto em novas sessões
 
-1. Abra o arquivo `.context/09-meta-prompt.md`
-2. Cole o bloco `<system_prompt>` no início da sessão com Claude
-3. Qualquer prompt enviado depois será automaticamente contextualizado
+1. Abrir `.context/prompts/meta-prompt.md`
+2. Cole o bloco `<system_prompt>` como system prompt
+3. Ou simplesmente ler `.context/MASTER.md` (versão compacta XML)
 
 ---
 
 ## Jurados
 
-| Jurado | Cargo | O que mais valoriza |
+| Jurado | Cargo | Argumento principal |
 |---|---|---|
-| **Marcelo Linhares** | CEO & Co-founder | Demo funcionando ao vivo, código real, elimina ineficiência |
-| **Elvis Soares** | Dir. Comercial & Co-founder | Diferencial vs. VOLL, potencial de crescimento |
-| **Elvimar "Manzinho"** | Part Owner / CFO | ROI mensurável, compliance, número financeiro concreto |
-
-**Regra de ouro:** expense management ganha pontos. IA é obrigatória — sem IA = desclassificado.
+| **Marcelo Linhares** | CEO & Co-founder | Demo ao vivo no chat: reserva em 30s. Código real. |
+| **Elvis Soares** | Dir. Comercial & Co-founder | "A VOLL não tem booking conversacional. Esse é o diferencial." |
+| **Elvimar "Manzinho"** | Part Owner / CFO | "X min/reserva × Y reservas/mês × 3.200 empresas = R$Z em produtividade." |
 
 ---
 
@@ -103,5 +107,5 @@ hackaton/
 
 - **Onfly:** maior Travel Tech B2B da LATAM, 3.200+ clientes, R$240M Série B
 - **Maior ameaça:** VOLL (R$700M Warburg Pincus, Smart Hub com agentes de IA)
-- **Dor confirmada:** expense 100% manual, dashboard passivo, aprovações binárias
+- **Regra de ouro:** IA é obrigatória — sem IA = desclassificado
 - **Não repetir:** Trust Expense, Agente de Suporte, Duty of Care, Flow Expense (já existem)

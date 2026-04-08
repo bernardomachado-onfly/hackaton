@@ -1,6 +1,7 @@
-# Produto Onfly — O que existe hoje
+# Onfly — Produto e Stack Atual
 
-> Extraído de arch-v2.md. Use como referência antes de propor qualquer ideia — ideias que já existem são descartadas pelos jurados.
+> Extraído de arch-v2.md. Use como referência antes de propor qualquer ideia.
+> Ideias que já existem são descartadas pelos jurados.
 
 ---
 
@@ -9,6 +10,9 @@
 - Fundada em 2018, +3.200 empresas (Vivara, PicPay, Hotmart, Vtex)
 - R$240 milhões em Série B (Tidemark, abril/2025)
 - Projeção R$1,5 bilhão em GMV para 2025
+- DNA: Quase morreu na pandemia (queda 99% abril/2020, demitiu 18/22). Voltou mais forte.
+- Missão implícita: "Digitalizar o analógico, simplificar o burocrático"
+- Anti-padrões: emails para cotação, Excel para reembolso, processos de 12 etapas
 
 ---
 
@@ -29,12 +33,13 @@
 
 | Produto | O que faz | Status |
 |---|---|---|
-| **Trust Expense** | Auditoria inteligente de despesas via IA: detecta notas repetidas, valores divergentes, datas erradas, moeda incorreta | ✅ Em produção (200 empresas) |
+| **Trust Expense** | Auditoria inteligente: detecta notas repetidas, valores divergentes, datas erradas, moeda incorreta | ✅ Em produção (200 empresas) |
 | **Agente de Suporte** | Chatbot que resolve 77% dos chamados sem humano, CSAT 81% | ✅ Liberado para 70% da base |
 | **Onflynho – Operações** | Copiloto interno para funcionários da Onfly | ✅ Disponível para todos Onflyers |
 | **Recomendação de Hotel** | Ao comprar voo, sugere hotel no mesmo destino/período | ✅ 110.995 reservas recomendadas |
 | **Servidores MCP** | Model Context Protocol para escalar IA na jornada | ✅ Lançado |
 | **Tradução automática (Gemini)** | App mobile traduzido automaticamente para PT/EN/ES | ✅ Em produção |
+| **Duty of Care** | Mapa em tempo real com status de voos e alertas de incidentes globais | ✅ Em produção |
 
 ---
 
@@ -54,7 +59,6 @@
 | **Rateio de centro de custo** | Em implementação (v0.5) |
 | **Bloqueio de locadoras** | Cliente bloqueia sozinho, sem chamado |
 | **App offline-first** | Funciona sem internet, sincroniza depois |
-| **Duty of Care** | Mapa em tempo real com status de voos e alertas de incidentes globais |
 
 ---
 
@@ -67,16 +71,16 @@
 
 ---
 
-## Áreas ainda abertas para inovação (identificadas no briefing)
+## Áreas abertas para inovação (identificadas no briefing)
 
-1. Agente conversacional end-to-end (WhatsApp que RESERVA, não só responde)
+1. Agente conversacional end-to-end (WhatsApp que RESERVA, não só responde) ← **SELECIONADA**
 2. Previsão de orçamento (forecast financeiro preditivo)
 3. Smart Rebooking (monitora preços e re-reserva automaticamente)
 4. ESG/Carbono (cálculo de pegada e alternativas sustentáveis)
-5. Negociação automática (agente que negocia tarifas com hotéis/cias aéreas)
-6. Insights para política (IA que sugere ajustes na política baseado em padrões)
-7. Onboarding inteligente (configura a empresa automaticamente baseado em perfil)
-8. Conciliação automática (IA que cruza NFs com extratos bancários)
+5. Negociação automática (agente que negocia tarifas)
+6. Insights para política (IA que sugere ajustes na política)
+7. Onboarding inteligente (configura empresa automaticamente)
+8. Conciliação automática (IA que cruza NFs com extratos)
 
 ---
 
@@ -89,4 +93,4 @@
 | Aprovações | Binárias — sem scoring de risco ou priorização |
 | Configurações | 1.344 centros de custo + 276 tags — campo minado de erros |
 
-> Detalhe completo em `04-plataforma.md`.
+> Detalhe completo em `ops/plataforma.md`.
