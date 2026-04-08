@@ -3,14 +3,16 @@ services:
   backend:
     build:
       context: ./backend
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     environment:
       PORT: 3001
       NODE_ENV: production
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      CORS_ORIGINS: http://localhost:80,http://localhost
+      CORS_ORIGINS: http://fingeseronfly.com.br,https://fingeseronfly.com.br,http://www.fingeseronfly.com.br,https://www.fingeseronfly.com.br
     restart: unless-stopped
+    networks:
+      - internal
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
       interval: 10s
@@ -21,15 +23,38 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: http://localhost:3001
-    ports:
-      - "80:80"
+        VITE_API_URL: https://api.fingeseronfly.com.br
+    expose:
+      - "80"
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  npm_data:
+  npm_letsencrypt:
