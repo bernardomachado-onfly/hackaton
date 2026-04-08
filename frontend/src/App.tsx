@@ -69,6 +69,39 @@ export function App() {
           case 'pass_link':
             if (event.url) setPassUrl(event.url);
             break;
+          case 'flight_options':
+            if (event.flights && event.flights.length > 0) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, flightOptions: event.flights }
+                    : m,
+                ),
+              );
+            }
+            break;
+          case 'hotel_options':
+            if (event.hotels && event.hotels.length > 0) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, hotelOptions: event.hotels }
+                    : m,
+                ),
+              );
+            }
+            break;
+          case 'passenger_summary':
+            if (event.data) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, passengerSummary: event.data }
+                    : m,
+                ),
+              );
+            }
+            break;
           case 'done':
             if (event.trip) setTrip(event.trip);
             break;
@@ -102,7 +135,11 @@ export function App() {
       <Header trip={trip} />
       <main className={styles.messages}>
         {messages.map(msg => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            onSelect={msg.role === 'assistant' && !isLoading ? handleSend : undefined}
+          />
         ))}
         <ToolStatus tool={activeTool} />
         {passUrl && (

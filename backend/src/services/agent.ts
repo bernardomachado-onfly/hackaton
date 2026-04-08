@@ -80,10 +80,22 @@ Se a viagem já está confirmada, informe e pergunte se precisa de algo mais.
 O session_id do usuário será fornecido no contexto. Use-o ao criar a reserva.`;
 }
 
+export interface PassengerSummaryData {
+  name: string;
+  email: string;
+  cpf: string;
+  phone: string;
+  birthdate: string;
+  gender: string;
+}
+
 export interface StreamCallback {
   onText: (text: string) => void;
   onToolUse: (toolName: string) => void;
   onToolResult: (toolName: string) => void;
+  onFlightOptions: (flights: FlightOption[]) => void;
+  onHotelOptions: (hotels: HotelOption[]) => void;
+  onPassengerSummary: (data: PassengerSummaryData) => void;
   onEnd: () => void;
   onError: (error: Error) => void;
 }
@@ -304,12 +316,8 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
 
         await streamText(`✈️ Encontrei **${flights.total} voos** de **${origin}** para **${destination}** em ${formatDate(date)}:\n\n`);
 
-        for (let i = 0; i < flights.results.length; i++) {
-          const f = flights.results[i];
-          await streamText(`**${i + 1}. ${f.airline} ${f.flightNumber}**\n   🕐 ${f.departureTime} → ${f.arrivalTime} | ${f.stops === 0 ? 'Direto' : f.stops + ' parada(s)'} | ${f.class}\n   💰 **R$ ${f.price.toFixed(2)}**\n\n`);
-        }
+        callbacks.onFlightOptions(flights.results as FlightOption[]);
 
-        await streamText('Qual opção você prefere? (digite o número)');
         break;
       }
 
@@ -348,13 +356,8 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
 
         await streamText(`🏨 Encontrei **${hotels.total} hotéis** em **${destination}** (${hotels.nights} noite${hotels.nights > 1 ? 's' : ''}):\n\n`);
 
-        for (let i = 0; i < hotels.results.length; i++) {
-          const h = hotels.results[i];
-          const stars = '⭐'.repeat(Math.floor(h.rating));
-          await streamText(`**${i + 1}. ${h.name}** ${stars}\n   📍 ${h.address}\n   💰 R$ ${h.pricePerNight.toFixed(2)}/noite — **Total: R$ ${h.totalPrice.toFixed(2)}**\n   🛎️ ${h.amenities.join(', ')}\n\n`);
-        }
+        callbacks.onHotelOptions(hotels.results as HotelOption[]);
 
-        await streamText('Qual hotel você prefere? (digite o número)');
         break;
       }
 
@@ -439,6 +442,17 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
           await streamText(`🏨 ${session.trip.hotel.name}\n\n`);
         }
         await streamText(`A reserva foi enviada para aprovação. Você receberá uma confirmação por e-mail.\n\nPrecisa de mais alguma coisa?`);
+
+        // Emitir resumo do passageiro com dados mock (em prod, viriam da sessão/perfil)
+        callbacks.onPassengerSummary({
+          name: booking.passenger?.name || 'João Silva',
+          email: booking.passenger?.email || 'joao.silva@empresa.com',
+          cpf: booking.passenger?.cpf || '123.456.789-00',
+          phone: booking.passenger?.phone || '(11) 99999-9999',
+          birthdate: booking.passenger?.birthdate || '15/03/1985',
+          gender: booking.passenger?.gender || 'Masculino',
+        });
+
         break;
       }
 
