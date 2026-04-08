@@ -27,7 +27,7 @@ export function Header({ trip }: HeaderProps) {
       <div className={styles.brand}>
         <span className={styles.logo}>✈️</span>
         <span className={styles.title}>Travel Assistant</span>
-        <span className={styles.badge}>by Onfly</span>
+        <a className={styles.badge} href="https://onfly.com.br" target="_blank" rel="noreferrer">by Onfly</a>
       </div>
       {trip && currentStep >= 0 && (
         <nav className={styles.stepper}>
