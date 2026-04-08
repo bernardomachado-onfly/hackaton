@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Travel Assistant — Onfly Copilot</title>
   <meta name="description" content="Reserve viagens corporativas em 30 segundos com linguagem natural. O agente de IA da Onfly que elimina formulários." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈</text></svg>">
+  <meta property="og:title" content="Onfly Copilot — Reserve viagens em 30 segundos" />
+  <meta property="og:description" content="Agente conversacional que executa reservas corporativas via chat. Zero formulários." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://page.fingeseronfly.com.br" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -402,6 +407,31 @@
     }
     .btn-white:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.2); }
 
+    /* ─── CONTACT ─── */
+    #contact {
+      background: var(--light-bg);
+      text-align: center;
+    }
+    #contact h2 { margin-bottom: 16px; }
+    #contact .section-sub { margin: 0 auto 48px; }
+    .contact-buttons {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-whatsapp {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25D366; color: #fff; border: none;
+      padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,.35); }
+    .btn-email {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; color: #0ea5e9; border: 1.5px solid #0ea5e9;
+      padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .btn-email:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14,165,233,.18); }
+
     /* ─── FOOTER ─── */
     footer {
       background: var(--ink); color: rgba(255,255,255,.5);
@@ -436,6 +466,8 @@
       .feature-card.wide { grid-column: span 1; }
       .demo-layout { grid-template-columns: 1fr; }
       .demo-chat { display: none; }
+      .demo-copy { display: block; }
+      .demo-steps { display: flex; flex-direction: column; }
     }
   </style>
 </head>
@@ -453,8 +485,9 @@
       <a href="#features">Recursos</a>
       <a href="#tech">Tecnologia</a>
       <a href="#company">Empresa</a>
+      <a href="#contact">Contato</a>
     </div>
-    <a href="#cta" class="nav-cta">Ver demo →</a>
+    <a href="https://fingeseronfly.com.br/" class="nav-cta" target="_blank">Ver demo →</a>
   </nav>
 
   <!-- ─── HERO ─── -->
@@ -664,10 +697,10 @@
           <p>Sem necessidade de digitar no formato certo. O agente resolve datas relativas antes de buscar.</p>
           <div class="feature-date-table">
             <div class="fdt-row"><span class="tag">Você diz</span><span class="tag">O agente entende</span></div>
-            <div class="fdt-row"><span>"amanhã"</span><span class="val">→ 09/04/2026</span></div>
-            <div class="fdt-row"><span>"semana que vem"</span><span class="val">→ +7 dias</span></div>
-            <div class="fdt-row"><span>"segunda"</span><span class="val">→ próxima segunda-feira</span></div>
-            <div class="fdt-row"><span>"daqui a 3 dias"</span><span class="val">→ +3 dias</span></div>
+            <div class="fdt-row"><span>"amanhã"</span><span class="val" id="fdt-amanha">→ carregando...</span></div>
+            <div class="fdt-row"><span>"semana que vem"</span><span class="val" id="fdt-semana">→ carregando...</span></div>
+            <div class="fdt-row"><span>"segunda"</span><span class="val" id="fdt-segunda">→ carregando...</span></div>
+            <div class="fdt-row"><span>"daqui a 3 dias"</span><span class="val" id="fdt-3dias">→ carregando...</span></div>
           </div>
         </div>
 
@@ -884,7 +917,26 @@
     <div class="container">
       <h2 class="reveal">Pronto para<br/>eliminar formulários?</h2>
       <p class="reveal reveal-delay-1">Reserve viagens corporativas com uma mensagem. O futuro da gestão de viagens começa aqui.</p>
-      <a href="#hero" class="btn-white reveal reveal-delay-2">✈ Começar agora</a>
+      <a href="https://fingeseronfly.com.br/" class="btn-white reveal reveal-delay-2" target="_blank">✈ Começar agora</a>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-eyebrow reveal">Contato</div>
+      <h2 class="reveal">Fale com a gente</h2>
+      <p class="section-sub reveal">Ficou curioso? Entre em contato e saiba mais sobre o Onfly Copilot.</p>
+      <div class="contact-buttons reveal reveal-delay-1">
+        <a href="https://wa.me/5531999999999" class="btn-whatsapp" target="_blank">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+        <a href="mailto:copilot@onfly.com.br" class="btn-email">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          copilot@onfly.com.br
+        </a>
+      </div>
     </div>
   </section>
 
@@ -899,6 +951,46 @@
       Powered by <strong style="color:rgba(255,255,255,.6); margin:0 4px">Claude API</strong> · Anthropic
     </div>
   </footer>
+
+  <!-- ─── DYNAMIC DATES ─── -->
+  <script>
+    (function () {
+      function pad(n) { return String(n).padStart(2, '0'); }
+      function fmt(d) {
+        return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+      }
+
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // amanhã = hoje + 1
+      var amanha = new Date(today);
+      amanha.setDate(today.getDate() + 1);
+
+      // semana que vem = hoje + 7
+      var semana = new Date(today);
+      semana.setDate(today.getDate() + 7);
+
+      // próxima segunda-feira (day 1)
+      var segunda = new Date(today);
+      var diasAteSegunda = (1 - today.getDay() + 7) % 7 || 7;
+      segunda.setDate(today.getDate() + diasAteSegunda);
+
+      // daqui a 3 dias
+      var tresDias = new Date(today);
+      tresDias.setDate(today.getDate() + 3);
+
+      var elAmanha  = document.getElementById('fdt-amanha');
+      var elSemana  = document.getElementById('fdt-semana');
+      var elSegunda = document.getElementById('fdt-segunda');
+      var el3dias   = document.getElementById('fdt-3dias');
+
+      if (elAmanha)  elAmanha.textContent  = '→ ' + fmt(amanha);
+      if (elSemana)  elSemana.textContent  = '→ ' + fmt(semana);
+      if (elSegunda) elSegunda.textContent = '→ próxima seg, ' + fmt(segunda);
+      if (el3dias)   el3dias.textContent   = '→ ' + fmt(tresDias);
+    })();
+  </script>
 
   <!-- ─── SCROLL REVEAL ─── -->
   <script>
