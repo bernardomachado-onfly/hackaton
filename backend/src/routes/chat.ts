@@ -1,0 +1,64 @@
+import { Router, type Request, type Response } from 'express';
+import { sessionStore } from '../services/session.js';
+import { chat } from '../services/agent.js';
+
+const router = Router();
+
+router.post('/chat', async (req: Request, res: Response) => {
+  const { message, sessionId } = req.body;
+
+  if (!message || typeof message !== 'string') {
+    res.status(400).json({ error: 'Campo "message" é obrigatório' });
+    return;
+  }
+
+  const session = sessionStore.getOrCreate(sessionId);
+
+  // SSE headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Session-Id', session.id);
+  res.flushHeaders();
+
+  // Send session info
+  res.write(`data: ${JSON.stringify({ type: 'session', sessionId: session.id })}\n\n`);
+
+  await chat(session, message, {
+    onText(text) {
+      res.write(`data: ${JSON.stringify({ type: 'text', content: text })}\n\n`);
+    },
+    onToolUse(toolName) {
+      res.write(`data: ${JSON.stringify({ type: 'tool_start', tool: toolName })}\n\n`);
+    },
+    onToolResult(toolName) {
+      res.write(`data: ${JSON.stringify({ type: 'tool_end', tool: toolName })}\n\n`);
+    },
+    onEnd() {
+      res.write(`data: ${JSON.stringify({ type: 'done', trip: session.trip })}\n\n`);
+      res.end();
+    },
+    onError(error) {
+      res.write(`data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`);
+      res.end();
+    },
+  });
+});
+
+// Get session state
+router.get('/session/:id', (req: Request, res: Response) => {
+  const session = sessionStore.get(req.params.id as string);
+  if (!session) {
+    res.status(404).json({ error: 'Sessão não encontrada' });
+    return;
+  }
+  res.json({
+    id: session.id,
+    trip: session.trip,
+    messageCount: session.messages.length,
+    createdAt: session.createdAt,
+    updatedAt: session.updatedAt,
+  });
+});
+
+export default router;

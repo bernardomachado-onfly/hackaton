@@ -1,0 +1,61 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  font-size: 24px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0ea5e9;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stepper {
+  display: flex;
+  gap: 4px;
+}
+
+.step {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 16px;
+  color: #94a3b8;
+  background: #f1f5f9;
+  transition: all 0.3s;
+}
+
+.step.active {
+  color: #0ea5e9;
+  background: #e0f2fe;
+}
+
+.step.current {
+  font-weight: 700;
+  box-shadow: 0 0 0 2px #0ea5e9;
+}

@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+*.log
+
+# Scraper files (hackathon exploration)
+scraper*.mjs
+open-browser.mjs
+explore.mjs
+hover-menus.mjs
+
+# Old root-level config (migrated to backend/frontend)
+/src/
+/package.json
+/package-lock.json
+/tsconfig.json
+/tsconfig.server.json
+/vite.config.ts
+
+# IDE/tool skills
+.cursor/
+.windsurf/
+.agents/
