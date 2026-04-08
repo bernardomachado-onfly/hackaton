@@ -46,5 +46,5 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
             sleep 10
-            curl -sf http://localhost:3001/health
+            sudo docker exec hackaton-backend wget -qO- http://localhost:3001/health
           "
