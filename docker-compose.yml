@@ -9,7 +9,7 @@ services:
       PORT: 3001
       NODE_ENV: production
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      CORS_ORIGINS: http://fingeseronfly.com.br,https://fingeseronfly.com.br,http://www.fingeseronfly.com.br,https://www.fingeseronfly.com.br
+      CORS_ORIGINS: http://fingeseronfly.com.br,https://fingeseronfly.com.br,http://www.fingeseronfly.com.br,https://www.fingeseronfly.com.br,http://page.fingeseronfly.com.br,https://page.fingeseronfly.com.br
     restart: unless-stopped
     networks:
       - internal
@@ -29,6 +29,20 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  landing:
+    build:
+      context: ./landing
+    ports:
+      - "3003:80"
     restart: unless-stopped
     networks:
       - internal
