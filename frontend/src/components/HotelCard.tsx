@@ -7,8 +7,11 @@ interface HotelCardProps {
 }
 
 export function HotelCard({ hotel, index, onSelect }: HotelCardProps) {
-  const stars = '⭐'.repeat(Math.floor(hotel.rating));
-  const topAmenities = hotel.amenities.slice(0, 3);
+  const rating = hotel.rating ?? 0;
+  const stars = '⭐'.repeat(Math.min(Math.max(Math.floor(rating), 0), 5));
+  const amenities = Array.isArray(hotel.amenities) ? hotel.amenities.slice(0, 3) : [];
+  const pricePerNight = hotel.pricePerNight ?? 0;
+  const totalPrice = hotel.totalPrice ?? 0;
 
   return (
     <div style={{
@@ -26,38 +29,38 @@ export function HotelCard({ hotel, index, onSelect }: HotelCardProps) {
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>🏨</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '14px', color: '#0e3a5f' }}>{hotel.name}</div>
-            <div style={{ fontSize: '12px', color: '#f59e0b' }}>{stars}</div>
+            <div style={{ fontWeight: 700, fontSize: '14px', color: '#0e3a5f' }}>{hotel.name ?? ''}</div>
+            <div style={{ fontSize: '12px', color: '#f59e0b' }}>{stars || '—'}</div>
           </div>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '15px', color: '#0e3a5f' }}>
-            R$ {hotel.pricePerNight.toFixed(2)}<span style={{ fontSize: '11px', fontWeight: 400, color: '#6b7280' }}>/noite</span>
+            R$ {pricePerNight.toFixed(2)}<span style={{ fontSize: '11px', fontWeight: 400, color: '#6b7280' }}>/noite</span>
           </div>
           <div style={{ fontSize: '12px', color: '#374151', fontWeight: 600 }}>
-            Total: R$ {hotel.totalPrice.toFixed(2)}
+            Total: R$ {totalPrice.toFixed(2)}
           </div>
         </div>
       </div>
 
-      <div style={{ fontSize: '12px', color: '#6b7280' }}>
-        📍 {hotel.address}
-      </div>
+      {hotel.address && (
+        <div style={{ fontSize: '12px', color: '#6b7280' }}>
+          📍 {typeof hotel.address === 'object'
+            ? ((hotel.address as unknown as { addressLine?: string; street?: string; district?: string }).addressLine
+                || (hotel.address as unknown as { street?: string; district?: string }).street
+                || '')
+            : hotel.address}
+        </div>
+      )}
 
-      {topAmenities.length > 0 && (
+      {amenities.length > 0 && (
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          {topAmenities.map((amenity, i) => (
-            <span
-              key={i}
-              style={{
-                background: '#f0f4f8',
-                borderRadius: '6px',
-                padding: '2px 8px',
-                fontSize: '11px',
-                color: '#374151',
-              }}
-            >
-              {amenity}
+          {amenities.map((a, i) => (
+            <span key={i} style={{
+              background: '#f0f4f8', borderRadius: '6px',
+              padding: '2px 8px', fontSize: '11px', color: '#374151',
+            }}>
+              {a}
             </span>
           ))}
         </div>
@@ -67,14 +70,9 @@ export function HotelCard({ hotel, index, onSelect }: HotelCardProps) {
         <button
           onClick={() => onSelect(String(index + 1))}
           style={{
-            background: '#0e3a5f',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '6px 16px',
-            fontSize: '13px',
-            fontWeight: 600,
-            cursor: 'pointer',
+            background: '#0e3a5f', color: '#fff', border: 'none',
+            borderRadius: '8px', padding: '6px 16px',
+            fontSize: '13px', fontWeight: 600, cursor: 'pointer',
           }}
           onMouseOver={e => (e.currentTarget.style.background = '#1a5276')}
           onMouseOut={e => (e.currentTarget.style.background = '#0e3a5f')}

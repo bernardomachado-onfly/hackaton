@@ -102,6 +102,17 @@ export function App() {
               );
             }
             break;
+          case 'booking_confirmed':
+            if (event.booking) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, bookingConfirmed: event.booking }
+                    : m,
+                ),
+              );
+            }
+            break;
           case 'done':
             if (event.trip) setTrip(event.trip);
             break;
@@ -155,7 +166,7 @@ export function App() {
               boxShadow: '0 4px 16px rgba(0,0,0,.25)',
             }}
           >
-            🍎 Ver Boarding Pass
+            🎫 Ver Boarding Pass
           </a>
         )}
         <div ref={messagesEndRef} />

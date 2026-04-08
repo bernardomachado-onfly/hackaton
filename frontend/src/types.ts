@@ -5,6 +5,7 @@ export interface ChatMessage {
   flightOptions?: FlightOption[];
   hotelOptions?: HotelOption[];
   passengerSummary?: PassengerSummaryData;
+  bookingConfirmed?: BookingConfirmedData;
 }
 
 export interface TripState {
@@ -57,6 +58,13 @@ export interface HotelOption {
   checkout: string;
 }
 
+export interface BookingConfirmedData {
+  bookingCode: string;
+  flight?: { airline: string; flightNumber: string; origin: string; destination: string; date: string; price: number };
+  hotel?: { name: string; checkin: string; checkout: string; nights: number; price: number };
+  total: number;
+}
+
 export interface PassengerSummaryData {
   name: string;
   email: string;
@@ -67,7 +75,7 @@ export interface PassengerSummaryData {
 }
 
 export interface SSEEvent {
-  type: 'session' | 'text' | 'tool_start' | 'tool_end' | 'done' | 'error' | 'pass_link' | 'flight_options' | 'hotel_options' | 'passenger_summary';
+  type: 'session' | 'text' | 'tool_start' | 'tool_end' | 'done' | 'error' | 'pass_link' | 'flight_options' | 'hotel_options' | 'passenger_summary' | 'booking_confirmed';
   sessionId?: string;
   content?: string;
   tool?: string;
@@ -77,4 +85,5 @@ export interface SSEEvent {
   flights?: FlightOption[];
   hotels?: HotelOption[];
   data?: PassengerSummaryData;
+  booking?: BookingConfirmedData;
 }

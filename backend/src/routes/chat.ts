@@ -57,6 +57,9 @@ router.post('/chat', async (req: Request, res: Response) => {
     onPassengerSummary(data: PassengerSummaryData) {
       res.write(`data: ${JSON.stringify({ type: 'passenger_summary', data })}\n\n`);
     },
+    onBookingConfirmed(booking) {
+      res.write(`data: ${JSON.stringify({ type: 'booking_confirmed', booking })}\n\n`);
+    },
     onEnd() {
       if (session.trip?.bookingCode) {
         res.write(`data: ${JSON.stringify({ type: 'pass_link', url: `/api/pass/${session.trip.bookingCode}` })}\n\n`);
