@@ -60,6 +60,7 @@ export interface HotelOption {
 
 export interface BookingConfirmedData {
   bookingCode: string;
+  passengers?: number;
   flight?: { airline: string; flightNumber: string; origin: string; destination: string; date: string; price: number };
   hotel?: { name: string; checkin: string; checkout: string; nights: number; price: number };
   total: number;

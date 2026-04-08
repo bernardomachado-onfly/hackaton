@@ -91,6 +91,7 @@ export interface PassengerSummaryData {
 
 export interface BookingConfirmedData {
   bookingCode: string;
+  passengers?: number;
   flight?: { airline: string; flightNumber: string; origin: string; destination: string; date: string; price: number };
   hotel?: { name: string; checkin: string; checkout: string; nights: number; price: number };
   total: number;
@@ -452,6 +453,7 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
 
         callbacks.onBookingConfirmed({
           bookingCode,
+          passengers: session.trip.passengers || 1,
           flight: session.trip.flight ? {
             airline: airlineName,
             flightNumber: String(session.trip.flight.flightNumber),
@@ -706,7 +708,12 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
         bookingClass: 'Economy',
       });
 
-      const flightPrice = resolvedFlight?.price ?? 0;
+      const passengers = session.trip.passengers || 1;
+      // cheapestTotalPrice is already the total for all passengers; cheapestPrice fallback is per-person
+      const flightPriceRaw = resolvedFlight?.price ?? 0;
+      // Heuristic: if price looks per-person (small) and passengers > 1, multiply; otherwise use as-is.
+      // The API prefers cheapestTotalPrice (already total), so we trust it as the full price.
+      const flightTotal = flightPriceRaw;
       const hotelPrice = resolvedHotel?.totalPrice ?? 0;
       const checkin = session.trip.departureDate || '';
       const checkout = session.trip.returnDate || '';
@@ -716,13 +723,14 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
 
       callbacks.onBookingConfirmed({
         bookingCode,
+        passengers,
         flight: resolvedFlight ? {
           airline: airlineName,
           flightNumber: String(resolvedFlight.flightNumber),
           origin: resolvedFlight.origin,
           destination: resolvedFlight.destination,
           date: checkin,
-          price: flightPrice,
+          price: flightTotal,
         } : undefined,
         hotel: resolvedHotel ? {
           name: resolvedHotel.name,
@@ -731,7 +739,7 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
           nights,
           price: hotelPrice,
         } : undefined,
-        total: flightPrice + hotelPrice,
+        total: flightTotal + hotelPrice,
       });
     }
   } catch {

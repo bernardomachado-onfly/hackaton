@@ -46,7 +46,7 @@ export function FlightCard({ flight, index, onSelect }: FlightCardProps) {
           <div style={{ fontWeight: 700, fontSize: '16px', color: '#0e3a5f' }}>
             R$ {price.toFixed(2)}
           </div>
-          <div style={{ fontSize: '11px', color: '#6b7280' }}>por pessoa</div>
+          <div style={{ fontSize: '11px', color: '#6b7280' }}>total</div>
         </div>
       </div>
 

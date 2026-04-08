@@ -16,6 +16,9 @@ export function BookingConfirmationCard({ data }: { data: BookingConfirmedData }
           <div style={{ fontWeight: 700, fontSize: '16px' }}>Reserva Confirmada!</div>
           <div style={{ fontSize: '12px', opacity: 0.75, letterSpacing: '0.05em' }}>
             Código: <strong style={{ letterSpacing: '0.1em' }}>{data.bookingCode}</strong>
+            {data.passengers && data.passengers > 1 && (
+              <span style={{ marginLeft: '8px' }}>· {data.passengers} passageiros</span>
+            )}
           </div>
         </div>
       </div>
