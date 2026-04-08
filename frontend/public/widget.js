@@ -27,6 +27,35 @@
   var isOpen = false;
   var isLoading = false;
 
+  // Capture Onfly auth token when embedded in app.onfly.com
+  function getOnflyToken() {
+    try {
+      // Check localStorage for JWT tokens
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        var val = localStorage.getItem(keys[i]);
+        if (val && val.startsWith('eyJ') && val.length > 100) {
+          // Prefer tokens from Onfly-specific keys
+          if (keys[i].includes('token') || keys[i].includes('auth') || keys[i].includes('session')) {
+            return val;
+          }
+        }
+      }
+      // Fallback: any JWT in localStorage
+      for (var i = 0; i < keys.length; i++) {
+        var val = localStorage.getItem(keys[i]);
+        if (val && val.startsWith('eyJ') && val.length > 100) return val;
+      }
+      // Check sessionStorage too
+      keys = Object.keys(sessionStorage);
+      for (var i = 0; i < keys.length; i++) {
+        var val = sessionStorage.getItem(keys[i]);
+        if (val && val.startsWith('eyJ') && val.length > 100) return val;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   // ── Styles ──
   var css = `
     #ta-widget-fab {
@@ -348,7 +377,7 @@
       var res = await fetch(config.api + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, sessionId: sessionId, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
+        body: JSON.stringify({ message: text, sessionId: sessionId, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, onflyToken: getOnflyToken() }),
       });
 
       if (!res.ok) throw new Error('HTTP ' + res.status);
