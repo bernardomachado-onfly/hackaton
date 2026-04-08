@@ -47,6 +47,28 @@ npm install
 npm run dev
 ```
 
+## Widget embedável
+
+O chat pode ser inserido em qualquer página existente com uma linha:
+
+```html
+<script src="https://seu-frontend.vercel.app/widget.js" data-api="https://seu-backend.railway.app"></script>
+```
+
+### Atributos opcionais
+
+| Atributo | Padrão | Descrição |
+|----------|--------|-----------|
+| `data-api` | `""` | URL do backend |
+| `data-position` | `bottom-right` | Posição do botão (`bottom-right` ou `bottom-left`) |
+| `data-title` | `Travel Assistant` | Título no header do chat |
+| `data-subtitle` | `by Onfly` | Badge no header |
+| `data-color` | `#0ea5e9` | Cor principal |
+
+### Demo local
+
+Acesse `http://localhost:5173/widget-demo.html` para testar o widget em uma página de exemplo.
+
 ## Deploy
 
 - **Frontend**: Vercel (auto-deploy from `frontend/`)
