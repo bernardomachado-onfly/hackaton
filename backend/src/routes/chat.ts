@@ -1,11 +1,12 @@
 import { Router, type Request, type Response } from 'express';
 import { sessionStore } from '../services/session.js';
 import { chat } from '../services/agent.js';
+import { getOnflyToken } from '../services/onfly-auth.js';
 
 const router = Router();
 
 router.post('/chat', async (req: Request, res: Response) => {
-  const { message, sessionId, timezone } = req.body;
+  const { message, sessionId, timezone, onflyToken } = req.body;
 
   if (!message || typeof message !== 'string') {
     res.status(400).json({ error: 'Campo "message" é obrigatório' });
@@ -14,11 +15,21 @@ router.post('/chat', async (req: Request, res: Response) => {
 
   const session = sessionStore.getOrCreate(sessionId);
 
+  // Set Onfly token: widget-provided or server-side auth
+  if (onflyToken) {
+    session.onflyToken = onflyToken;
+  } else if (!session.onflyToken) {
+    try {
+      session.onflyToken = await getOnflyToken();
+    } catch (err) {
+      console.log('⚠️ [Chat] Falha ao obter token Onfly:', (err as Error).message);
+    }
+  }
+
   // SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
   res.setHeader('X-Session-Id', session.id);
   res.flushHeaders();
 

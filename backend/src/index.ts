@@ -7,7 +7,7 @@ validateConfig();
 
 const app = express();
 
-app.use(cors({ origin: config.corsOrigins }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use('/api', chatRouter);

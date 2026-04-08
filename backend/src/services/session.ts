@@ -37,6 +37,10 @@ export interface TripState {
   departureDate?: string;
   returnDate?: string;
   passengers?: number;
+  lastFlightResults?: any[];
+  lastHotelResults?: any[];
+  destCityId?: string;
+  destCityName?: string;
 }
 
 export interface Message {
@@ -48,6 +52,7 @@ export interface Session {
   id: string;
   messages: Message[];
   trip: TripState;
+  onflyToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }

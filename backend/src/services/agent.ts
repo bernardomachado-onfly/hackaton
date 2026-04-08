@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { toolDefinitions, executeTool } from '../tools/index.js';
+import { toolDefinitions, executeTool, type ToolContext } from '../tools/index.js';
 import { sessionStore, type Session, type FlightOption, type HotelOption } from './session.js';
 
 const USE_CLAUDE = !!process.env.ANTHROPIC_API_KEY;
@@ -524,9 +524,15 @@ async function claudeChat(session: Session, userMessage: string, timezone: strin
       if (hasToolUse && toolUseBlocks.length > 0) {
         messages.push({ role: 'assistant', content: finalMessage.content });
 
+        const toolContext: ToolContext = {
+          onflyToken: session.onflyToken,
+          destCityId: session.trip.destCityId,
+          destCityName: session.trip.destCityName,
+        };
+
         const toolResults: Anthropic.ToolResultBlockParam[] = [];
         for (const tool of toolUseBlocks) {
-          const result = await executeTool(tool.name, tool.input);
+          const result = await executeTool(tool.name, tool.input, toolContext);
           callbacks.onToolResult(tool.name);
           updateSessionFromToolResult(session, tool.name, tool.input, result);
 
@@ -584,9 +590,15 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
         departureDate: input.departure_date as string,
         returnDate: input.return_date as string | undefined,
         passengers: input.passengers as number || 1,
+        lastFlightResults: result.results || [],
+        destCityId: result._meta?.destCityId || session.trip.destCityId,
+        destCityName: result._meta?.destCityName || session.trip.destCityName,
       });
     } else if (toolName === 'search_hotels') {
-      sessionStore.updateTrip(session.id, { status: 'searching_hotel' });
+      sessionStore.updateTrip(session.id, {
+        status: 'searching_hotel',
+        lastHotelResults: result.results || [],
+      });
     } else if (toolName === 'create_booking') {
       sessionStore.updateTrip(session.id, { status: 'confirmed' });
     }

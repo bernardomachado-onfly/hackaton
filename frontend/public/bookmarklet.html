@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Assistant — Instalar Bookmarklet</title>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { color: #0ea5e9; }
+    .bookmarklet-link {
+      display: inline-block;
+      padding: 14px 28px;
+      background: #0ea5e9;
+      color: #fff;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: grab;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+    }
+    .bookmarklet-link:hover { background: #0284c7; }
+    .step { background: #fff; padding: 20px; border-radius: 12px; margin: 16px 0; border: 1px solid #e2e8f0; }
+    .step h3 { margin-top: 0; color: #0ea5e9; }
+    code { background: #1e293b; color: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 13px; }
+    .code-block { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; overflow-x: auto; margin: 12px 0; word-break: break-all; }
+    .note { background: #fef3c7; border: 1px solid #fbbf24; padding: 12px 16px; border-radius: 8px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✈️ Travel Assistant — Bookmarklet</h1>
+    <p>Injete o chat do Travel Assistant em qualquer página — incluindo <code>app.onfly.com</code>.</p>
+
+    <div class="step">
+      <h3>Opção 1: Bookmarklet (arraste para a barra de favoritos)</h3>
+      <p>Arraste o botão abaixo para a sua <strong>barra de favoritos</strong>:</p>
+      <a class="bookmarklet-link" id="bookmarklet" href="#">✈️ Travel Assistant</a>
+      <p>Depois, navegue até <code>app.onfly.com</code> e clique no favorito.</p>
+    </div>
+
+    <div class="step">
+      <h3>Opção 2: Console do navegador (F12)</h3>
+      <p>Abra <code>app.onfly.com</code>, pressione F12, vá em Console e cole:</p>
+      <div class="code-block" id="console-code"></div>
+    </div>
+
+    <div class="note">
+      <strong>Nota:</strong> Quando injetado na página da Onfly, o widget captura automaticamente o token de sessão do usuário logado — sem necessidade de autenticação adicional.
+    </div>
+
+    <div class="step">
+      <h3>Como funciona</h3>
+      <ul>
+        <li>O script injeta o widget.js na página atual</li>
+        <li>Se estiver no <code>app.onfly.com</code>, captura o token do localStorage</li>
+        <li>O token é enviado ao backend junto com cada mensagem</li>
+        <li>O backend usa o token para buscar voos/hotéis reais na API da Onfly</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Build the bookmarklet code
+    const API_URL = window.location.origin.includes('localhost')
+      ? 'http://localhost:3001'
+      : window.location.origin.replace(/:\d+$/, ':3001');
+
+    const injectionCode = `
+(function(){
+  if(document.getElementById('ta-widget-fab')){return;}
+  var s=document.createElement('script');
+  s.src='${window.location.origin}/widget.js';
+  s.setAttribute('data-api','${API_URL}');
+  document.body.appendChild(s);
+})();`.trim();
+
+    const bookmarkletHref = 'javascript:' + encodeURIComponent(injectionCode);
+
+    document.getElementById('bookmarklet').href = bookmarkletHref;
+    document.getElementById('console-code').textContent = injectionCode;
+  </script>
+</body>
+</html>
