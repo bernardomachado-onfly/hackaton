@@ -6,3 +6,7 @@
 .userContent { background: #0e3a5f; color: #fff; border-bottom-right-radius: 4px; }
 .assistantContent { background: #f0f4f8; color: #1a1a1a; border-bottom-left-radius: 4px; }
 .text { white-space: pre-wrap; word-break: break-word; }
+
+@media (max-width: 480px) {
+  .bubble { max-width: 90%; }
+}
