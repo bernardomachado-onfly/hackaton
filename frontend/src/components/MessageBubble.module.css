@@ -1,8 +1,12 @@
 .bubble { display: flex; gap: 10px; align-items: flex-end; max-width: 80%; }
 .bubble.user { align-self: flex-end; flex-direction: row-reverse; }
 .bubble.assistant { align-self: flex-start; }
-.avatar { width: 32px; height: 32px; border-radius: 50%; background: #f0f4f8; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; overflow: hidden; padding: 4px; }
 .content { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
 .userContent { background: #0e3a5f; color: #fff; border-bottom-right-radius: 4px; }
 .assistantContent { background: #f0f4f8; color: #1a1a1a; border-bottom-left-radius: 4px; }
 .text { white-space: pre-wrap; word-break: break-word; }
+
+@media (max-width: 480px) {
+  .bubble { max-width: 90%; }
+}
