@@ -43,7 +43,7 @@ corporativas completas via chat (aéreo → hotel → confirmação).
 ## Diretrizes de código
 
 - TypeScript strict em todo o projeto
-- **Todos os tipos compartilhados estão em `src/types/index.ts`** — importar de lá, nunca redefinir interfaces localmente
+- **Todos os tipos compartilhados estão em `.context/specs/types.ts`** — importar de lá, nunca redefinir interfaces localmente
 - Mocks realistas quando API Onfly não estiver disponível
 - SSE para streaming (não WebSocket — mais simples para demo)
 - SessionStore in-memory (sem banco de dados no hackathon)

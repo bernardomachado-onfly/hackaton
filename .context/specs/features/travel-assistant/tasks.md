@@ -3,7 +3,7 @@
 > Plano de execução para as 8h do hackathon.
 > Status: [ ] pendente | [→] em andamento | [✓] concluído
 >
-> **IMPORTANTE:** Todas as interfaces estão em `src/types/index.ts`.
+> **IMPORTANTE:** Todas as interfaces estão em `.context/specs/types.ts`.
 > Ler antes de implementar qualquer tool ou serviço.
 
 ---
@@ -32,7 +32,7 @@ npx tsc --noEmit  # zero erros de tipagem
 **Duração:** 30 min | **Depende de:** T1 | **Owner:** Dev F1
 
 Arquivo: `src/store/SessionStore.ts`
-Tipos: importar `Session`, `Message`, `TripState` de `src/types/index.ts`
+Tipos: importar `Session`, `Message`, `TripState` de `.context/specs/types.ts`
 
 ```typescript
 class SessionStore {
@@ -58,7 +58,7 @@ console.log(store.get(s.id)?.messages.length) // → 1
 **Duração:** 60 min | **Depende de:** T1, T2 | **Owner:** Dev F1
 
 Arquivo: `src/agent/AgentService.ts`
-Tipos: importar de `src/types/index.ts`
+Tipos: importar de `.context/specs/types.ts`
 
 ```typescript
 async function* run(session: Session, userMessage: string): AsyncIterable<string> {
@@ -82,7 +82,7 @@ curl -X POST http://localhost:3000/api/chat \
 
 ## F2 — Tools (02:00–04:00) — PARALELO
 
-> **Antes de começar:** todos os tipos já estão em `src/types/index.ts`.
+> **Antes de começar:** todos os tipos já estão em `.context/specs/types.ts`.
 > Importar de lá — não redefinir interfaces localmente.
 
 ### T4 — search_flights

@@ -14,7 +14,7 @@
   TEMPO: 8 horas | Data: 2026-04-08
   ENTREGÁVEIS: Produto funcional + Landing page + Post LinkedIn
   SPECS: Ver .context/specs/
-  TIPOS COMPARTILHADOS: src/types/index.ts — importar de lá, nunca redefinir localmente
+  TIPOS COMPARTILHADOS: .context/specs/types.ts — importar de lá, nunca redefinir localmente
 
   ATENÇÃO: Este arquivo é contexto estático (empresa, ideia, jurados, stack).
   Para estado real do projeto (progresso, decisões, features implementadas),
