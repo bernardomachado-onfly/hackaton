@@ -125,8 +125,9 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
     return getMockFlights(origin, destination, departureDate, returnDate, passengers);
   }
 
-  const apiData = await response.json() as { data: any[] };
-  const quoteData = apiData.data?.[0];
+  const apiData = await response.json() as any;
+  // Response is a direct array [{item, response}], not {data: [...]}
+  const quoteData = Array.isArray(apiData) ? apiData[0] : apiData?.data?.[0];
 
   if (!quoteData?.item?.id) {
     console.log('⚠️ [Flights] Resposta vazia da API, usando mock');
