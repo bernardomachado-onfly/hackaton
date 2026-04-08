@@ -24,3 +24,6 @@ hover-menus.mjs
 
 # Draft/temp files
 _draft/
+
+# Dev scripts
+backend/scripts/

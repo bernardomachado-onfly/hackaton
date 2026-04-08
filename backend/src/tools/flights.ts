@@ -74,17 +74,16 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
   }));
 
   const payload: Record<string, unknown> = {
-    owners: [null],
     flights: [
       {
-        origin: { type: 'cityId', value: origin },
-        destination: { type: 'cityId', value: destination },
-        outboundDate: departureDate,
-        ...(returnDate ? { inboundDate: returnDate } : {}),
-        travelers: travellers,
-        cabin: 'economy',
+        from: origin,
+        to: destination,
+        departure: departureDate,
+        ...(returnDate ? { return: returnDate } : {}),
+        travelers: passengers,
       },
     ],
+    groupFlights: true,
   };
 
   let response: Response;
@@ -126,8 +125,9 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
     return getMockFlights(origin, destination, departureDate, returnDate, passengers);
   }
 
-  const apiData = await response.json() as { data: any[] };
-  const quoteData = apiData.data?.[0];
+  const apiData = await response.json() as any;
+  // Response is a direct array [{item, response}], not {data: [...]}
+  const quoteData = Array.isArray(apiData) ? apiData[0] : apiData?.data?.[0];
 
   if (!quoteData?.item?.id) {
     console.log('⚠️ [Flights] Resposta vazia da API, usando mock');

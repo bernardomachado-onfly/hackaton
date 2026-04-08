@@ -145,8 +145,8 @@ export async function searchHotels(input: ToolInput, context: ToolContext = {}) 
     return getMockHotels(city, checkin, checkout, guests);
   }
 
-  const apiData = await response.json() as { data: any[] };
-  const quoteData = apiData.data?.[0];
+  const apiData = await response.json() as any;
+  const quoteData = Array.isArray(apiData) ? apiData[0] : apiData?.data?.[0];
 
   if (!quoteData?.response?.data) {
     console.log('⚠️ [Hotels] Resposta vazia da API, usando mock');
