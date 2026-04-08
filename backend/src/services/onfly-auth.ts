@@ -14,8 +14,8 @@ interface TokenCache {
 let cache: TokenCache | null = null;
 
 // Step 1: Get OAuth token (lasts ~1 year)
-async function getOAuthToken(): Promise<string> {
-  if (cache?.oauthToken && Date.now() < cache.oauthExpiresAt) {
+async function getOAuthToken(forceNew = false): Promise<string> {
+  if (!forceNew && cache?.oauthToken && Date.now() < cache.oauthExpiresAt) {
     return cache.oauthToken;
   }
 
@@ -39,7 +39,7 @@ async function getOAuthToken(): Promise<string> {
 
   const data = await response.json() as { access_token: string; expires_in: number };
   const token = data.access_token;
-  const expiresAt = Date.now() + (data.expires_in * 1000) - 60000; // 1 min buffer
+  const expiresAt = Date.now() + (data.expires_in * 1000) - 60000;
 
   if (!cache) {
     cache = { oauthToken: '', oauthExpiresAt: 0, internalToken: '', internalExpiresAt: 0 };
@@ -52,13 +52,12 @@ async function getOAuthToken(): Promise<string> {
 }
 
 // Step 2: Exchange OAuth token for internal session token
-async function getInternalToken(): Promise<string> {
-  // Internal token expires in ~15min, refresh with 2 min buffer
-  if (cache?.internalToken && Date.now() < cache.internalExpiresAt) {
+async function getInternalToken(forceNewOAuth = false): Promise<string> {
+  if (!forceNewOAuth && cache?.internalToken && Date.now() < cache.internalExpiresAt) {
     return cache.internalToken;
   }
 
-  const oauthToken = await getOAuthToken();
+  const oauthToken = await getOAuthToken(forceNewOAuth);
 
   console.log('🔑 [Auth] Obtendo token interno...');
 
@@ -71,6 +70,11 @@ async function getInternalToken(): Promise<string> {
 
   if (!response.ok) {
     const err = await response.text().catch(() => '');
+    // If internal token fails and we didn't force new OAuth, retry with fresh OAuth
+    if (!forceNewOAuth) {
+      console.log('⚠️ [Auth] Token interno falhou, tentando com OAuth novo...');
+      return getInternalToken(true);
+    }
     throw new Error(`Internal token failed: ${response.status} ${err.substring(0, 200)}`);
   }
 
@@ -81,8 +85,8 @@ async function getInternalToken(): Promise<string> {
     throw new Error('Internal token: no token in response');
   }
 
-  // Internal token lasts ~15 min, refresh at 13 min
-  const expiresAt = Date.now() + (13 * 60 * 1000);
+  // Internal token lasts ~15 min, refresh at 12 min
+  const expiresAt = Date.now() + (12 * 60 * 1000);
 
   if (!cache) {
     cache = { oauthToken: '', oauthExpiresAt: 0, internalToken: '', internalExpiresAt: 0 };
@@ -99,18 +103,17 @@ export async function getOnflyToken(): Promise<string> {
   try {
     return await getInternalToken();
   } catch (err) {
-    console.log('❌ [Auth] Falha na autenticação:', (err as Error).message);
-    // Invalidate cache and retry once
+    console.log('❌ [Auth] Falha total na autenticação:', (err as Error).message);
+    // Nuclear reset — limpa tudo e tenta do zero
     cache = null;
-    return await getInternalToken();
+    return await getInternalToken(true);
   }
 }
 
-// Force refresh (e.g., after a 401)
+// Force refresh (e.g., after a 401 from BFF)
 export async function refreshOnflyToken(): Promise<string> {
-  if (cache) {
-    cache.internalToken = '';
-    cache.internalExpiresAt = 0;
-  }
-  return getInternalToken();
+  console.log('🔄 [Auth] Forçando renovação completa...');
+  // Limpa tudo — novo OAuth + novo internal
+  cache = null;
+  return getInternalToken(true);
 }
