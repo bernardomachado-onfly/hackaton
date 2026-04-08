@@ -1,0 +1,50 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'docker-compose.yml'
+
+jobs:
+  deploy:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Sync backend to EC2
+        run: |
+          rsync -avz --delete \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./backend/ ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/backend/
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/docker-compose.yml
+
+      - name: Rebuild and restart
+        run: |
+          ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
+            cd ~/hackaton
+            sudo docker compose up --build -d backend
+          "
+
+      - name: Health check
+        run: |
+          ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
+            sleep 10
+            curl -sf http://localhost:3001/health
+          "

@@ -1,13 +1,16 @@
-name: Deploy to EC2
+name: Deploy Frontend
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
+      - 'docker-compose.yml'
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -21,28 +24,27 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Sync files to EC2
+      - name: Sync frontend to EC2
         run: |
           rsync -avz --delete \
-            --exclude='.git' \
             --exclude='node_modules' \
             --exclude='dist' \
-            --exclude='.env' \
             -e "ssh -i ~/.ssh/deploy_key" \
-            ./ ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/
+            ./frontend/ ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/frontend/
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/docker-compose.yml
 
-      - name: Build and restart containers
+      - name: Rebuild and restart
         run: |
           ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
             cd ~/hackaton
-            sudo docker compose up --build -d
-            sudo docker compose ps
+            sudo docker compose up --build -d frontend
           "
 
       - name: Health check
         run: |
           ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
             sleep 15
-            curl -sf http://localhost:3001/health
             curl -sf http://localhost/health
           "
