@@ -152,7 +152,7 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
 
   const results = flightGroups.map((group: any) => {
     const packageId = group.id;
-    const priceInCentavos = group.cheapestTotalPrice || 0;
+    const priceInCentavos = group.cheapestTotalPrice || group.cheapestPrice || 0;
     const price = priceInCentavos / 100;
     const fareId = group.fares?.[0]?.id || '';
 
@@ -160,14 +160,28 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
     const segments = outbound?.segments || [];
     const flightIds = segments.map((s: any) => s.id).filter(Boolean);
 
+    // departure/arrival are datetime strings like "2026-04-15 09:25:00"
+    const depStr = typeof outbound?.departure === 'string' ? outbound.departure : '';
+    const arrStr = typeof outbound?.arrival === 'string' ? outbound.arrival : '';
+    const depTime = depStr ? depStr.split(' ')[1]?.substring(0, 5) || '' : '';
+    const arrTime = arrStr ? arrStr.split(' ')[1]?.substring(0, 5) || '' : '';
+
+    // ciaManaging is an object { code, name, imageUrl }
+    const cia = outbound?.ciaManaging;
+    const airlineName = typeof cia === 'object' && cia ? cia.name || cia.code || '' : String(cia || '');
+
+    // from/to may be objects with .code or .iata
+    const fromCode = outbound?.from?.code || outbound?.from?.iata || origin;
+    const toCode = outbound?.to?.code || outbound?.to?.iata || destination;
+
     return {
       id: packageId,
-      airline: outbound?.ciaManaging || '',
-      flightNumber: outbound?.flightNumber || '',
-      origin: outbound?.departure?.iata || origin,
-      destination: outbound?.arrival?.iata || destination,
-      departureTime: outbound?.departure?.dateTime || '',
-      arrivalTime: outbound?.arrival?.dateTime || '',
+      airline: airlineName,
+      flightNumber: String(outbound?.flightNumber || ''),
+      origin: fromCode,
+      destination: toCode,
+      departureTime: depTime,
+      arrivalTime: arrTime,
       duration: outbound?.duration || '',
       price,
       currency: 'BRL',
