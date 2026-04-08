@@ -22,6 +22,7 @@ export function App() {
     localStorage.getItem('ta_session_id'),
   );
   const [trip, setTrip] = useState<TripState | null>(null);
+  const [passUrl, setPassUrl] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,9 @@ export function App() {
           case 'tool_end':
             setActiveTool(null);
             break;
+          case 'pass_link':
+            if (event.url) setPassUrl(event.url);
+            break;
           case 'done':
             if (event.trip) setTrip(event.trip);
             break;
@@ -101,6 +105,22 @@ export function App() {
           <MessageBubble key={msg.id} message={msg} />
         ))}
         <ToolStatus tool={activeTool} />
+        {passUrl && (
+          <a
+            href={passUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              alignSelf: 'center', background: '#000', color: '#fff',
+              borderRadius: '14px', padding: '14px 22px', textDecoration: 'none',
+              fontWeight: 600, fontSize: '15px', margin: '8px 0',
+              boxShadow: '0 4px 16px rgba(0,0,0,.25)',
+            }}
+          >
+            🍎 Ver Boarding Pass
+          </a>
+        )}
         <div ref={messagesEndRef} />
       </main>
       <InputBar onSend={handleSend} disabled={isLoading} />

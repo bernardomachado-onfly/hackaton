@@ -48,6 +48,9 @@ router.post('/chat', async (req: Request, res: Response) => {
       res.write(`data: ${JSON.stringify({ type: 'tool_end', tool: toolName })}\n\n`);
     },
     onEnd() {
+      if (session.trip?.bookingCode) {
+        res.write(`data: ${JSON.stringify({ type: 'pass_link', url: `/api/pass/${session.trip.bookingCode}` })}\n\n`);
+      }
       res.write(`data: ${JSON.stringify({ type: 'done', trip: session.trip })}\n\n`);
       res.end();
     },
