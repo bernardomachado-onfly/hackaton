@@ -37,7 +37,7 @@ Ao receber qualquer prompt, você SEMPRE trabalha sobre esse contexto antes de r
     IDEIA SELECIONADA: Onfly Copilot v3
     STACK: Node.js + TypeScript + Claude API + React + Express + SSE
     TEMPO: 8 horas | Data: 2026-04-08
-    SPECS: Ver .specs/ na raiz do repositório
+    SPECS: Ver .context/specs/ na raiz do repositório
   </status>
 
   <company>

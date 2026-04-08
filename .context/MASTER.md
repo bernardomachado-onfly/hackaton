@@ -14,7 +14,7 @@
   STACK: Node.js + TypeScript + Claude API (Anthropic SDK) + React + Express + SSE
   TEMPO: 8 horas | Data: 2026-04-08
   ENTREGÁVEIS: Produto funcional + Landing page + Post LinkedIn
-  SPECS: Ver .specs/ na raiz do repo
+  SPECS: Ver .context/specs/ na raiz do repo
 </status>
 
 <company>
@@ -156,7 +156,7 @@
     F3 (sequential): SSE endpoint → React UI → Integração end-to-end
     F4 (parallel):   Landing page
   Pendente: Documentação da API Onfly (Postman) — usar mocks até receber.
-  Specs completas: ver .specs/ na raiz do repo.
+  Specs completas: ver .context/specs/ na raiz do repo.
 </selected_idea>
 
 </hackathon>

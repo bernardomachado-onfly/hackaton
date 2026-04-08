@@ -35,11 +35,10 @@
 │   ├── meta-prompt.md     ← system prompt completo para novas sessões
 │   └── eng-prompt.md      ← boas práticas de prompt engineering (Anthropic)
 │
-└── _source/               ← IMUTÁVEL — documentos originais
-    ├── arch-v2.md
-    └── ARCHITECTURE.md
-
-.specs/                    ← especificações técnicas do produto
+├── _source/               ← IMUTÁVEL — documentos originais
+│   ├── arch-v2.md
+│   └── ARCHITECTURE.md
+└── specs/                 ← especificações técnicas do produto
 ├── project/
 │   ├── PROJECT.md         ← visão, escopo, stack, critérios de sucesso
 │   └── ROADMAP.md         ← linha do tempo das 8h com tarefas
@@ -66,9 +65,9 @@
 | Narrativa de pitch | `.context/deep/recomendacao.md` |
 | Observações da plataforma | `.context/ops/plataforma.md` |
 | Feedback do monitor | `.context/ops/plataforma.md` |
-| Arquitetura técnica | `.specs/features/travel-assistant/design.md` |
-| Tasks com código | `.specs/features/travel-assistant/tasks.md` |
-| User stories | `.specs/features/travel-assistant/spec.md` |
+| Arquitetura técnica | `.context/specs/features/travel-assistant/design.md` |
+| Tasks com código | `.context/specs/features/travel-assistant/tasks.md` |
+| User stories | `.context/specs/features/travel-assistant/spec.md` |
 | Boas práticas de prompt | `.context/prompts/eng-prompt.md` |
 
 ---
@@ -79,7 +78,7 @@ Quando houver conflito entre arquivos:
 
 1. `.context/ops/estado-atual.md` — DECISÕES (o que foi decidido)
 2. `.context/MASTER.md` — CONTEXTO (o que é verdade)
-3. `.specs/` — IMPLEMENTAÇÃO (como fazer)
+3. `.context/specs/` — IMPLEMENTAÇÃO (como fazer)
 4. `.context/deep/` — REFERÊNCIA (detalhes e histórico)
 
 ---

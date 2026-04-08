@@ -24,7 +24,7 @@
 
 - Fluxo: aéreo → hotel → confirmação, com retomada de sessão
 - Stack: Node.js + TypeScript + Claude API + React + Express + SSE
-- Specs completas: `.specs/` na raiz do repositório
+- Specs completas: `.context/specs/` na raiz do repositório
 
 ### Pendências críticas
 - [ ] Documentação da API Onfly (Postman) — usar mocks até receber
@@ -47,7 +47,7 @@
 
 | Feature | Data | Arquivos | Status |
 |---|---|---|---|
-| Estrutura do projeto | 2026-04-08 | `.specs/` | ✅ Planejado |
+| Estrutura do projeto | 2026-04-08 | `.context/specs/` | ✅ Planejado |
 | Contextos estratégicos | 2026-04-08 | `.context/` | ✅ Completo |
 
 ---

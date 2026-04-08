@@ -11,7 +11,7 @@ Repositório do time para o Hackathon Onfly — 100% IA.
 **Fase:** Desenvolvimento
 **Ideia selecionada:** Onfly Copilot v3 — agente conversacional de reservas
 **Stack:** Node.js + TypeScript + Claude API + React + Express + SSE
-**Próximo passo:** Implementar AgentService + Tools conforme `.specs/`
+**Próximo passo:** Implementar AgentService + Tools conforme `.context/specs/`
 
 ---
 
@@ -37,7 +37,7 @@ Repositório do time para o Hackathon Onfly — 100% IA.
 | Feature | Data | Arquivos | Status |
 |---|---|---|---|
 | Contextos estratégicos | 2026-04-08 | `.context/` | ✅ Completo |
-| Specs técnicas | 2026-04-08 | `.specs/` | ✅ Completo |
+| Specs técnicas | 2026-04-08 | `.context/specs/` | ✅ Completo |
 
 ---
 
@@ -62,18 +62,18 @@ hackathon/
 │   ├── prompts/                    ← prompts prontos
 │   │   ├── meta-prompt.md          ← system prompt para novas sessões
 │   │   └── eng-prompt.md           ← boas práticas Anthropic
-│   └── _source/                    ← documentos originais (imutável)
-│       ├── arch-v2.md
-│       └── ARCHITECTURE.md
-├── .specs/                         ← especificações técnicas
-│   ├── project/
-│   │   ├── PROJECT.md              ← visão, escopo, stack
-│   │   └── ROADMAP.md              ← linha do tempo 8h
-│   └── features/
-│       └── travel-assistant/
-│           ├── spec.md             ← user stories P1/P2
-│           ├── design.md           ← arquitetura, models, tools
-│           └── tasks.md            ← tasks com código inicial
+│   ├── _source/                    ← documentos originais (imutável)
+│   │   ├── arch-v2.md
+│   │   └── ARCHITECTURE.md
+│   └── specs/                      ← especificações técnicas
+│       ├── project/
+│       │   ├── PROJECT.md          ← visão, escopo, stack
+│       │   └── ROADMAP.md          ← linha do tempo 8h
+│       └── features/
+│           └── travel-assistant/
+│               ├── spec.md         ← user stories P1/P2
+│               ├── design.md       ← arquitetura, models, tools
+│               └── tasks.md        ← tasks com código inicial
 └── src/                            ← código (a implementar)
 ```
 
@@ -81,9 +81,9 @@ hackathon/
 
 ## Como iniciar o desenvolvimento
 
-1. Ler `.specs/features/travel-assistant/tasks.md` — tasks com código inicial
-2. Seguir a ordem do `.specs/project/ROADMAP.md`
-3. Consultar `.specs/features/travel-assistant/design.md` para arquitetura
+1. Ler `.context/specs/features/travel-assistant/tasks.md` — tasks com código inicial
+2. Seguir a ordem do `.context/specs/project/ROADMAP.md`
+3. Consultar `.context/specs/features/travel-assistant/design.md` para arquitetura
 
 ## Como usar o contexto em novas sessões
 
