@@ -3,6 +3,19 @@ import { bookingStore } from '../services/session.js';
 
 const router = Router();
 
+// Rota de teste — remove antes de produção
+router.get('/pass/test', (_req: Request, res: Response) => {
+  const code = 'BK-DEMO001';
+  bookingStore.set(code, {
+    bookingCode: code,
+    origin: 'GRU', originCity: 'São Paulo',
+    destination: 'BSB', destCity: 'Brasília',
+    flightNumber: 'G3 1278', date: '10/04', time: '11:15',
+    gate: 'B12', seat: '14A', passenger: 'Bernardo Machado', bookingClass: 'Economy',
+  });
+  res.redirect(`/api/pass/${code}`);
+});
+
 function generateBarcodeSvg(code: string): string {
   const bars: string[] = [];
   for (let i = 0; i < 80; i++) {
