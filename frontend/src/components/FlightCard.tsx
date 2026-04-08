@@ -8,6 +8,14 @@ interface FlightCardProps {
 
 export function FlightCard({ flight, index, onSelect }: FlightCardProps) {
   const stopsLabel = flight.stops === 0 ? 'Direto' : `${flight.stops} parada${flight.stops > 1 ? 's' : ''}`;
+  // API returns airline as object or string
+  const airlineName = typeof flight.airline === 'object' && flight.airline !== null
+    ? (flight.airline as unknown as { name: string }).name
+    : String(flight.airline);
+  const airlineImg = typeof flight.airline === 'object' && flight.airline !== null
+    ? (flight.airline as unknown as { imageUrl?: string }).imageUrl
+    : undefined;
+  const durationLabel = flight.duration ? `${Math.floor(flight.duration / 60)}h${flight.duration % 60 > 0 ? `${flight.duration % 60}m` : ''}` : '';
 
   return (
     <div style={{
@@ -23,12 +31,14 @@ export function FlightCard({ flight, index, onSelect }: FlightCardProps) {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '18px' }}>✈️</span>
+          {airlineImg
+            ? <img src={airlineImg} alt={airlineName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
+            : <span style={{ fontSize: '18px' }}>✈️</span>}
           <div>
             <div style={{ fontWeight: 700, fontSize: '14px', color: '#0e3a5f' }}>
-              {flight.airline}
+              {airlineName}
             </div>
-            <div style={{ fontSize: '12px', color: '#6b7280' }}>{flight.flightNumber} · {flight.class}</div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>Voo {flight.flightNumber}{durationLabel ? ` · ${durationLabel}` : ''}</div>
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>

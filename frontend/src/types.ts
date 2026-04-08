@@ -29,16 +29,18 @@ export interface TripState {
 
 export interface FlightOption {
   id: string;
-  airline: string;
-  flightNumber: string;
+  airline: string | { code: string; name: string; imageUrl?: string };
+  flightNumber: string | number;
   origin: string;
   destination: string;
   departureTime: string;
   arrivalTime: string;
+  duration?: number;
   price: number;
   currency: string;
-  class: string;
+  class?: string;
   stops: number;
+  departureDate?: string;
 }
 
 export interface HotelOption {

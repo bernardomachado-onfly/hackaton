@@ -565,7 +565,7 @@ async function claudeChat(session: Session, userMessage: string, timezone: strin
         for (const tool of toolUseBlocks) {
           const result = await executeTool(tool.name, tool.input, toolContext);
           callbacks.onToolResult(tool.name);
-          updateSessionFromToolResult(session, tool.name, tool.input, result);
+          updateSessionFromToolResult(session, tool.name, tool.input, result, callbacks);
 
           toolResults.push({
             type: 'tool_result',
@@ -608,12 +608,13 @@ function buildTripContext(session: Session): string {
   return parts.join('\n');
 }
 
-function updateSessionFromToolResult(session: Session, toolName: string, input: Record<string, unknown>, resultStr: string) {
+function updateSessionFromToolResult(session: Session, toolName: string, input: Record<string, unknown>, resultStr: string, callbacks: StreamCallback) {
   try {
     const result = JSON.parse(resultStr);
     if (!result.success) return;
 
     if (toolName === 'search_flights') {
+      const flights = result.results || [];
       sessionStore.updateTrip(session.id, {
         status: 'searching_flight',
         origin: input.origin as string,
@@ -621,31 +622,45 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
         departureDate: input.departure_date as string,
         returnDate: input.return_date as string | undefined,
         passengers: input.passengers as number || 1,
-        lastFlightResults: result.results || [],
+        lastFlightResults: flights,
         destCityId: result._meta?.destCityId || session.trip.destCityId,
         destCityName: result._meta?.destCityName || session.trip.destCityName,
       });
+      callbacks.onFlightOptions(flights);
     } else if (toolName === 'search_hotels') {
+      const hotels = result.results || [];
       sessionStore.updateTrip(session.id, {
         status: 'searching_hotel',
-        lastHotelResults: result.results || [],
+        lastHotelResults: hotels,
       });
+      callbacks.onHotelOptions(hotels);
     } else if (toolName === 'create_booking') {
       const bookingCode = (result.bookingId || result.booking_id || `BK-${Date.now()}`) as string;
       sessionStore.updateTrip(session.id, { status: 'confirmed', bookingCode });
+      const airlineName = typeof session.trip.flight?.airline === 'object' && session.trip.flight?.airline !== null
+        ? (session.trip.flight.airline as unknown as { name: string }).name
+        : String(session.trip.flight?.airline || '');
       bookingStore.set(bookingCode, {
         bookingCode,
         origin: session.trip.flight?.origin || session.trip.origin || 'GRU',
         originCity: session.trip.origin || 'São Paulo',
         destination: session.trip.flight?.destination || session.trip.destination || 'GIG',
         destCity: session.trip.destination || 'Rio de Janeiro',
-        flightNumber: session.trip.flight ? `${session.trip.flight.airline} ${session.trip.flight.flightNumber}` : 'N/A',
+        flightNumber: session.trip.flight ? `${airlineName} ${session.trip.flight.flightNumber}` : 'N/A',
         date: session.trip.departureDate || '',
         time: session.trip.flight?.departureTime || '',
         gate: 'A12',
-        seat: '14A',
-        passenger: 'Passageiro',
+        seat: result.seat || '14A',
+        passenger: result.passenger || 'Passageiro',
         bookingClass: 'Economy',
+      });
+      callbacks.onPassengerSummary({
+        name: result.passenger || 'Passageiro',
+        email: '',
+        cpf: '',
+        phone: '',
+        birthdate: '',
+        gender: '',
       });
     }
   } catch {
