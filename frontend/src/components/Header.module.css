@@ -2,60 +2,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 20px;
+  background: #0e3a5f;
+  color: #fff;
   flex-shrink: 0;
 }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo {
-  font-size: 24px;
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0ea5e9;
-}
-
-.badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: #64748b;
-  background: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stepper {
-  display: flex;
-  gap: 4px;
-}
-
-.step {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 4px 12px;
-  border-radius: 16px;
-  color: #94a3b8;
-  background: #f1f5f9;
-  transition: all 0.3s;
-}
-
-.step.active {
-  color: #0ea5e9;
-  background: #e0f2fe;
-}
-
-.step.current {
-  font-weight: 700;
-  box-shadow: 0 0 0 2px #0ea5e9;
-}
+.brand { display: flex; align-items: center; gap: 8px; }
+.logo { font-size: 20px; }
+.title { font-weight: 700; font-size: 16px; }
+.badge { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; }
+.stepper { display: flex; gap: 8px; }
+.step { font-size: 12px; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.15); opacity: 0.6; }
+.step.active { opacity: 1; background: rgba(255,255,255,0.25); }
+.step.current { background: #fff; color: #0e3a5f; font-weight: 600; }
