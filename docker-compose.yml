@@ -3,6 +3,7 @@ services:
   backend:
     build:
       context: ./backend
+    container_name: hackaton-backend
     expose:
       - "3001"
     environment:
@@ -24,6 +25,7 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: https://api.fingeseronfly.com.br
+    container_name: hackaton-frontend
     ports:
       - "3002:80"
     depends_on:
@@ -41,6 +43,7 @@ services:
   landing:
     build:
       context: ./landingpage
+    container_name: hackaton-landing
     ports:
       - "3003:80"
     restart: unless-stopped
