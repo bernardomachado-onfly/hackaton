@@ -5,7 +5,7 @@ import { chat } from '../services/agent.js';
 const router = Router();
 
 router.post('/chat', async (req: Request, res: Response) => {
-  const { message, sessionId } = req.body;
+  const { message, sessionId, timezone } = req.body;
 
   if (!message || typeof message !== 'string') {
     res.status(400).json({ error: 'Campo "message" é obrigatório' });
@@ -24,7 +24,7 @@ router.post('/chat', async (req: Request, res: Response) => {
   // Send session info
   res.write(`data: ${JSON.stringify({ type: 'session', sessionId: session.id })}\n\n`);
 
-  await chat(session, message, {
+  await chat(session, message, timezone || 'America/Sao_Paulo', {
     onText(text) {
       res.write(`data: ${JSON.stringify({ type: 'text', content: text })}\n\n`);
     },

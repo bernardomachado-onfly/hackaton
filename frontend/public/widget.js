@@ -348,7 +348,7 @@
       var res = await fetch(config.api + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, sessionId: sessionId }),
+        body: JSON.stringify({ message: text, sessionId: sessionId, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
       });
 
       if (!res.ok) throw new Error('HTTP ' + res.status);

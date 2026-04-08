@@ -5,7 +5,48 @@ import { sessionStore, type Session, type FlightOption, type HotelOption } from 
 const USE_CLAUDE = !!process.env.ANTHROPIC_API_KEY;
 const client = USE_CLAUDE ? new Anthropic() : null;
 
-const SYSTEM_PROMPT = `Você é o Travel Assistant da Onfly, um assistente inteligente especializado em reservas de viagens corporativas.
+function getSystemPrompt(timezone: string): string {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: timezone,
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timeFormatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const dateStr = formatter.format(now);
+  const timeStr = timeFormatter.format(now);
+
+  // Get day of week index (0=Sunday) for relative date calculations
+  const dayOfWeek = new Intl.DateTimeFormat('en-US', { timeZone: timezone, weekday: 'long' }).format(now);
+
+  return `Você é o Travel Assistant da Onfly, um assistente inteligente especializado em reservas de viagens corporativas.
+
+## Data e hora atual
+Hoje é **${dateStr}**, ${timeStr} (fuso: ${timezone}).
+Dia da semana atual: ${dayOfWeek}.
+
+Use essa informação para resolver datas relativas:
+- "amanhã" = o dia seguinte a hoje
+- "depois de amanhã" = dois dias após hoje
+- "segunda", "terça", etc. = o próximo dia da semana mencionado (se hoje é o dia mencionado, considere a próxima semana)
+- "semana que vem" = 7 dias a partir de hoje
+- "próxima segunda" = a próxima segunda-feira
+- "daqui a X dias" = hoje + X dias
+
+**IMPORTANTE**: Ao chamar as tools search_flights e search_hotels, SEMPRE converta datas relativas para o formato YYYY-MM-DD. Nunca passe "amanhã" ou "segunda" como parâmetro — calcule a data absoluta.
+
+## Idioma
+- Detecte automaticamente o idioma do usuário e responda no mesmo idioma
+- Se o usuário escrever em inglês, responda em inglês
+- Se escrever em espanhol, responda em espanhol
+- Por padrão, responda em português do Brasil
+- Mantenha o mesmo idioma durante toda a conversa, a menos que o usuário mude
 
 ## Seu papel
 Você ajuda clientes da Onfly a reservar viagens completas (voos e hotéis) de forma conversacional e natural.
@@ -28,8 +69,8 @@ Você ajuda clientes da Onfly a reservar viagens completas (voos e hotéis) de f
 - Se o usuário não especificar todos os dados, pergunte o que falta antes de buscar
 - Se o usuário quiser pular o hotel, vá direto para confirmação
 - Se o usuário quiser alterar algo, permita voltar a qualquer etapa
-- Responda sempre em português do Brasil
 - Use emojis com moderação para tornar a conversa mais visual (✈️ para voos, 🏨 para hotéis, ✅ para confirmação)
+- Quando o usuário mencionar datas relativas, confirme a data absoluta calculada antes de buscar (ex: "Entendi, amanhã dia 09/04, correto?")
 
 ## Retomada de conversa
 Se o usuário já tem um voo selecionado mas não hotel, sugira continuar com a hospedagem.
@@ -37,6 +78,7 @@ Se a viagem já está confirmada, informe e pergunte se precisa de algo mais.
 
 ## Informações da sessão
 O session_id do usuário será fornecido no contexto. Use-o ao criar a reserva.`;
+}
 
 export interface StreamCallback {
   onText: (text: string) => void;
@@ -422,7 +464,7 @@ function addDays(dateStr: string, days: number): string {
 // CLAUDE AGENT — com API key
 // ============================================================
 
-async function claudeChat(session: Session, userMessage: string, callbacks: StreamCallback) {
+async function claudeChat(session: Session, userMessage: string, timezone: string, callbacks: StreamCallback) {
   sessionStore.addMessage(session.id, { role: 'user', content: userMessage });
 
   const tripContext = buildTripContext(session);
@@ -441,7 +483,7 @@ async function claudeChat(session: Session, userMessage: string, callbacks: Stre
       const stream = client!.messages.stream({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
-        system: `${SYSTEM_PROMPT}\n\n## Contexto da sessão\nSession ID: ${session.id}\n${tripContext}`,
+        system: `${getSystemPrompt(timezone)}\n\n## Contexto da sessão\nSession ID: ${session.id}\n${tripContext}`,
         tools: toolDefinitions,
         messages,
       });
@@ -557,10 +599,10 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
 // EXPORT — escolhe automaticamente mock ou Claude
 // ============================================================
 
-export async function chat(session: Session, userMessage: string, callbacks: StreamCallback) {
+export async function chat(session: Session, userMessage: string, timezone: string, callbacks: StreamCallback) {
   if (USE_CLAUDE) {
     console.log('🤖 Usando Claude API');
-    return claudeChat(session, userMessage, callbacks);
+    return claudeChat(session, userMessage, timezone, callbacks);
   } else {
     console.log('🎭 Usando mock agent (configure ANTHROPIC_API_KEY para usar Claude)');
     return mockChat(session, userMessage, callbacks);
