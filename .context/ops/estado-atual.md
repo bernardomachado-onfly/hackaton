@@ -3,7 +3,7 @@
 > Fonte da verdade corrente. Atualizar a cada decisão importante.
 > Última atualização: 2026-04-08
 
-**PROGRESSO: 0% — Nenhum código implementado. Apenas contexto e specs prontos.**
+**PROGRESSO: 40% — Backend + Frontend + Docker funcionando. Agente IA operacional.**
 
 ---
 
@@ -49,8 +49,15 @@
 
 | Feature | Data | Arquivos | Status |
 |---|---|---|---|
-| Estrutura do projeto | 2026-04-08 | `.context/specs/` | ✅ Planejado |
 | Contextos estratégicos | 2026-04-08 | `.context/` | ✅ Completo |
+| Backend Express + SSE | 2026-04-08 | `backend/src/` | ✅ Funcionando |
+| Agente Claude (tool use) | 2026-04-08 | `backend/src/services/agent.ts` | ✅ Funcionando |
+| Tools: voos, hotéis, booking | 2026-04-08 | `backend/src/tools/` | ✅ Mocks realistas |
+| Session store in-memory | 2026-04-08 | `backend/src/services/session.ts` | ✅ Funcionando |
+| Frontend React + CSS Modules | 2026-04-08 | `frontend/src/` | ✅ Funcionando |
+| Widget embeddável | 2026-04-08 | `frontend/public/widget.js` | ✅ Funcionando |
+| Docker (backend + frontend) | 2026-04-08 | `Dockerfile`, `docker-compose.yml` | ✅ Containers saudáveis |
+| Health checks | 2026-04-08 | `:3001/health`, `:80/health` | ✅ 200 OK |
 
 ---
 

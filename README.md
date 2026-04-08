@@ -34,10 +34,22 @@ Repositório do time para o Hackathon Onfly — 100% IA.
 
 ## Setup local
 
+### Docker (recomendado)
+
+```bash
+cp .env.example .env   # preencha ANTHROPIC_API_KEY
+docker compose up --build
+```
+
+- Backend: http://localhost:3001/health
+- Frontend: http://localhost:80
+
+### Manual
+
 ```bash
 # Backend
 cd backend
-cp .env.example .env  # Configure ANTHROPIC_API_KEY
+cp .env.example .env
 npm install
 npm run dev
 
