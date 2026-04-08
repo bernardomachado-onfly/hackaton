@@ -25,10 +25,11 @@ export interface TripState {
 }
 
 export interface SSEEvent {
-  type: 'session' | 'text' | 'tool_start' | 'tool_end' | 'done' | 'error';
+  type: 'session' | 'text' | 'tool_start' | 'tool_end' | 'done' | 'error' | 'pass_link';
   sessionId?: string;
   content?: string;
   tool?: string;
   trip?: TripState;
   message?: string;
+  url?: string;
 }
