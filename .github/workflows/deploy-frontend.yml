@@ -39,7 +39,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key ubuntu@${{ secrets.EC2_HOST }} "
             cd ~/hackaton
-            sudo docker rm -f \$(sudo docker ps -aq --filter name=hackaton) 2>/dev/null || true
+            sudo docker compose down --remove-orphans
             sudo docker compose up --build -d
           "
 
