@@ -29,7 +29,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <div className={`${styles.bubble} ${isUser ? styles.user : styles.assistant}`}>
-      {!isUser && <div className={styles.avatar}><img src="/onfly-logo.jpg" alt="Onfly" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'50%'}} /></div>}
+      {!isUser && <div className={styles.avatar}><img src="/onfly-logo.jpg" alt="Onfly" style={{width:'100%',height:'100%',objectFit:'contain'}} /></div>}
       <div className={`${styles.content} ${isUser ? styles.userContent : styles.assistantContent}`}>
         <div className={styles.text}>{formatContent(message.content)}</div>
       </div>
