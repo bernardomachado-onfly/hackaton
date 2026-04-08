@@ -21,7 +21,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.listen(config.port, () => {
-  console.log(`🚀 Travel Assistant API running on port ${config.port}`);
+  console.log(`🚀 Travel Assistant API running on port ${config.port} [Onfly API integration]`);
   console.log(`   Environment: ${config.nodeEnv}`);
   console.log(`   CORS origins: ${config.corsOrigins.join(', ')}`);
 });
