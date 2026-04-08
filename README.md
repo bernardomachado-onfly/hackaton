@@ -46,7 +46,7 @@ Repositório do time para o Hackathon Onfly — 100% IA.
 ```
 hackathon/
 ├── README.md                       ← este arquivo
-├── CONTEXT_DOC.md                  ← índice e guia dos contextos
+│   ├── CONTEXT_DOC.md              ← índice e guia dos contextos
 ├── .context/                       ← contexto estratégico completo
 │   ├── MASTER.md                   ← entry point XML (ler primeiro)
 │   ├── deep/                       ← análises profundas
