@@ -30,7 +30,7 @@ jobs:
             --exclude='node_modules' \
             --exclude='dist' \
             -e "ssh -i ~/.ssh/deploy_key" \
-            ./landing/ ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/landing/
+            ./landingpage/ ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/landingpage/
           rsync -avz \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:~/hackaton/docker-compose.yml

@@ -40,7 +40,7 @@ services:
 
   landing:
     build:
-      context: ./landing
+      context: ./landingpage
     ports:
       - "3003:80"
     restart: unless-stopped
