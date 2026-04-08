@@ -9,12 +9,16 @@
 <hackathon>
 
 <status>
-  FASE: Desenvolvimento em andamento
   IDEIA SELECIONADA: Onfly Copilot v3 — agente conversacional de reservas
   STACK: Node.js + TypeScript + Claude API (Anthropic SDK) + React + Express + SSE
   TEMPO: 8 horas | Data: 2026-04-08
   ENTREGÁVEIS: Produto funcional + Landing page + Post LinkedIn
-  SPECS: Ver .context/specs/ na raiz do repo
+  SPECS: Ver .context/specs/
+  TIPOS COMPARTILHADOS: src/types/index.ts — importar de lá, nunca redefinir localmente
+
+  ATENÇÃO: Este arquivo é contexto estático (empresa, ideia, jurados, stack).
+  Para estado real do projeto (progresso, decisões, features implementadas),
+  consultar .context/ops/estado-atual.md — ele prevalece sempre.
 </status>
 
 <company>

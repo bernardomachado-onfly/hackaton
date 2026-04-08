@@ -76,7 +76,7 @@
 2. **Nunca sobrescreva histórico** — use tabelas de evolução com datas.
 3. **Nunca mova ideias para "descartadas" sem registrar o motivo.**
 4. **`_source/` é imutável** — apenas adicionar, nunca editar ou deletar.
-5. **`MASTER.md` deve refletir o estado atual** — quando `estado-atual.md` mudar, atualizar MASTER.md também.
+5. **`MASTER.md` é contexto estático** — empresa, ideia, jurados, stack não mudam durante o hackathon. Não atualizar `MASTER.md` a cada feature. Para estado corrente, usar apenas `estado-atual.md`. Se a ideia selecionada mudar, aí sim atualizar MASTER.md.
 
 ## Trabalho paralelo (múltiplos agentes/pessoas)
 
