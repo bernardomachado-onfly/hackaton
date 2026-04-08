@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Demo — Travel Assistant</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 40px;
+      color: #334155;
+    }
+    .demo-page {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { color: #0ea5e9; margin-bottom: 8px; }
+    p { line-height: 1.6; color: #64748b; }
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    .highlight { color: #38bdf8; }
+    .string { color: #a5f3fc; }
+  </style>
+</head>
+<body>
+  <div class="demo-page">
+    <h1>Travel Assistant Widget</h1>
+    <p>Este widget pode ser inserido em qualquer página. Clique no botão ✈️ no canto inferior direito para testar.</p>
+
+    <h2>Como usar</h2>
+    <p>Basta adicionar uma linha no HTML da sua página:</p>
+
+    <div class="code-block">
+      <span class="highlight">&lt;script</span> <span class="string">src</span>=<span class="string">"https://seu-dominio.com/widget.js"</span> <span class="string">data-api</span>=<span class="string">"https://sua-api.com"</span><span class="highlight">&gt;&lt;/script&gt;</span>
+    </div>
+
+    <h2>Atributos opcionais</h2>
+    <div class="code-block">
+      data-api="https://api.exemplo.com"    <!-- URL do backend -->
+      data-position="bottom-right"           <!-- bottom-right | bottom-left -->
+      data-title="Travel Assistant"          <!-- Título no header -->
+      data-subtitle="by Onfly"              <!-- Badge no header -->
+      data-color="#0ea5e9"                   <!-- Cor principal -->
+    </div>
+
+    <p>O widget persiste a sessão no localStorage, então o usuário pode fechar e reabrir sem perder o histórico.</p>
+  </div>
+
+  <!-- Widget embed -->
+  <script src="/widget.js" data-api="http://localhost:3001"></script>
+</body>
+</html>
