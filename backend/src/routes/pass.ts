@@ -28,7 +28,7 @@ function generateBarcodeSvg(code: string): string {
 }
 
 router.get('/pass/:bookingCode', (req: Request, res: Response) => {
-  const { bookingCode } = req.params;
+  const bookingCode = req.params['bookingCode'] as string;
   const booking = bookingStore.get(bookingCode);
 
   if (!booking) {
