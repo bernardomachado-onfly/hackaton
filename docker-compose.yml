@@ -24,8 +24,8 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: https://api.fingeseronfly.com.br
-    expose:
-      - "80"
+    ports:
+      - "3002:80"
     depends_on:
       backend:
         condition: service_healthy
