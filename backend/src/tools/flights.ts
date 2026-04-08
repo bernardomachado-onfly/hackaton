@@ -74,17 +74,16 @@ export async function searchFlights(input: ToolInput, context: ToolContext = {})
   }));
 
   const payload: Record<string, unknown> = {
-    owners: [null],
     flights: [
       {
-        origin: { type: 'cityId', value: origin },
-        destination: { type: 'cityId', value: destination },
-        outboundDate: departureDate,
-        ...(returnDate ? { inboundDate: returnDate } : {}),
-        travelers: travellers,
-        cabin: 'economy',
+        from: origin,
+        to: destination,
+        departure: departureDate,
+        ...(returnDate ? { return: returnDate } : {}),
+        travelers: passengers,
       },
     ],
+    groupFlights: true,
   };
 
   let response: Response;
