@@ -41,6 +41,7 @@ export interface TripState {
   lastHotelResults?: any[];
   destCityId?: string;
   destCityName?: string;
+  bookingCode?: string;
 }
 
 export interface Message {
@@ -100,3 +101,20 @@ class SessionStore {
 }
 
 export const sessionStore = new SessionStore();
+
+export interface BookingPassData {
+  bookingCode: string;
+  origin: string;
+  originCity: string;
+  destination: string;
+  destCity: string;
+  flightNumber: string;
+  date: string;
+  time: string;
+  gate: string;
+  seat: string;
+  passenger: string;
+  bookingClass: string;
+}
+
+export const bookingStore = new Map<string, BookingPassData>();

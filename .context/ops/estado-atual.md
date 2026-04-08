@@ -3,7 +3,7 @@
 > Fonte da verdade corrente. Atualizar a cada decisão importante.
 > Última atualização: 2026-04-08
 
-**PROGRESSO: 40% — Backend + Frontend + Docker funcionando. Agente IA operacional.**
+**PROGRESSO: 80% — Cards UI, booking confirmation card, Apple Wallet pass, integração API Onfly real.**
 
 ---
 
@@ -58,6 +58,10 @@
 | Widget embeddável | 2026-04-08 | `frontend/public/widget.js` | ✅ Funcionando |
 | Docker (backend + frontend) | 2026-04-08 | `Dockerfile`, `docker-compose.yml` | ✅ Containers saudáveis |
 | Health checks | 2026-04-08 | `:3001/health`, `:80/health` | ✅ 200 OK |
+| Card UI para voos e hotéis | 2026-04-08 | `FlightCard`, `HotelCard`, `MessageBubble` | ✅ Produção |
+| BookingConfirmationCard | 2026-04-08 | `BookingConfirmationCard.tsx`, `agent.ts` | ✅ Produção |
+| Apple Wallet pass link | 2026-04-08 | `chat.ts`, `pass.ts`, `App.tsx` | ✅ Produção |
+| Integração API Onfly real | 2026-04-08 | `flights.ts`, `hotels.ts`, `destinations.ts` | ✅ Com retry 401 |
 
 ---
 

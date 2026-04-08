@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { config, validateConfig } from './config.js';
 import chatRouter from './routes/chat.js';
+import passRouter from './routes/pass.js';
 
 validateConfig();
 
@@ -11,6 +12,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use('/api', chatRouter);
+app.use('/api', passRouter);
 
 app.get('/health', (_req, res) => {
   res.json({

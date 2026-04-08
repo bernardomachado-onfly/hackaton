@@ -1,7 +1,8 @@
 import { Router, type Request, type Response } from 'express';
 import { sessionStore } from '../services/session.js';
-import { chat } from '../services/agent.js';
+import { chat, type PassengerSummaryData } from '../services/agent.js';
 import { getOnflyToken } from '../services/onfly-auth.js';
+import type { FlightOption, HotelOption } from '../services/session.js';
 
 const router = Router();
 
@@ -47,7 +48,22 @@ router.post('/chat', async (req: Request, res: Response) => {
     onToolResult(toolName) {
       res.write(`data: ${JSON.stringify({ type: 'tool_end', tool: toolName })}\n\n`);
     },
+    onFlightOptions(flights: FlightOption[]) {
+      res.write(`data: ${JSON.stringify({ type: 'flight_options', flights })}\n\n`);
+    },
+    onHotelOptions(hotels: HotelOption[]) {
+      res.write(`data: ${JSON.stringify({ type: 'hotel_options', hotels })}\n\n`);
+    },
+    onPassengerSummary(data: PassengerSummaryData) {
+      res.write(`data: ${JSON.stringify({ type: 'passenger_summary', data })}\n\n`);
+    },
+    onBookingConfirmed(booking) {
+      res.write(`data: ${JSON.stringify({ type: 'booking_confirmed', booking })}\n\n`);
+    },
     onEnd() {
+      if (session.trip?.bookingCode) {
+        res.write(`data: ${JSON.stringify({ type: 'pass_link', url: `/api/pass/${session.trip.bookingCode}` })}\n\n`);
+      }
       res.write(`data: ${JSON.stringify({ type: 'done', trip: session.trip })}\n\n`);
       res.end();
     },

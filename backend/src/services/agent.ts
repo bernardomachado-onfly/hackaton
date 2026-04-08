@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { toolDefinitions, executeTool, type ToolContext } from '../tools/index.js';
-import { sessionStore, type Session, type FlightOption, type HotelOption } from './session.js';
+import { sessionStore, bookingStore, type Session, type FlightOption, type HotelOption } from './session.js';
 
 const USE_CLAUDE = !!process.env.ANTHROPIC_API_KEY;
 const client = USE_CLAUDE ? new Anthropic() : null;
@@ -80,10 +80,30 @@ Se a viagem já está confirmada, informe e pergunte se precisa de algo mais.
 O session_id do usuário será fornecido no contexto. Use-o ao criar a reserva.`;
 }
 
+export interface PassengerSummaryData {
+  name: string;
+  email: string;
+  cpf: string;
+  phone: string;
+  birthdate: string;
+  gender: string;
+}
+
+export interface BookingConfirmedData {
+  bookingCode: string;
+  flight?: { airline: string; flightNumber: string; origin: string; destination: string; date: string; price: number };
+  hotel?: { name: string; checkin: string; checkout: string; nights: number; price: number };
+  total: number;
+}
+
 export interface StreamCallback {
   onText: (text: string) => void;
   onToolUse: (toolName: string) => void;
   onToolResult: (toolName: string) => void;
+  onFlightOptions: (flights: FlightOption[]) => void;
+  onHotelOptions: (hotels: HotelOption[]) => void;
+  onPassengerSummary: (data: PassengerSummaryData) => void;
+  onBookingConfirmed: (data: BookingConfirmedData) => void;
   onEnd: () => void;
   onError: (error: Error) => void;
 }
@@ -304,12 +324,8 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
 
         await streamText(`✈️ Encontrei **${flights.total} voos** de **${origin}** para **${destination}** em ${formatDate(date)}:\n\n`);
 
-        for (let i = 0; i < flights.results.length; i++) {
-          const f = flights.results[i];
-          await streamText(`**${i + 1}. ${f.airline} ${f.flightNumber}**\n   🕐 ${f.departureTime} → ${f.arrivalTime} | ${f.stops === 0 ? 'Direto' : f.stops + ' parada(s)'} | ${f.class}\n   💰 **R$ ${f.price.toFixed(2)}**\n\n`);
-        }
+        callbacks.onFlightOptions(flights.results as FlightOption[]);
 
-        await streamText('Qual opção você prefere? (digite o número)');
         break;
       }
 
@@ -348,13 +364,8 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
 
         await streamText(`🏨 Encontrei **${hotels.total} hotéis** em **${destination}** (${hotels.nights} noite${hotels.nights > 1 ? 's' : ''}):\n\n`);
 
-        for (let i = 0; i < hotels.results.length; i++) {
-          const h = hotels.results[i];
-          const stars = '⭐'.repeat(Math.floor(h.rating));
-          await streamText(`**${i + 1}. ${h.name}** ${stars}\n   📍 ${h.address}\n   💰 R$ ${h.pricePerNight.toFixed(2)}/noite — **Total: R$ ${h.totalPrice.toFixed(2)}**\n   🛎️ ${h.amenities.join(', ')}\n\n`);
-        }
+        callbacks.onHotelOptions(hotels.results as HotelOption[]);
 
-        await streamText('Qual hotel você prefere? (digite o número)');
         break;
       }
 
@@ -412,16 +423,53 @@ async function mockChat(session: Session, userMessage: string, callbacks: Stream
         callbacks.onToolResult('create_booking');
 
         const booking = JSON.parse(bookingResult);
-        sessionStore.updateTrip(session.id, { status: 'confirmed' });
+        const bookingCode = booking.bookingId as string;
+        sessionStore.updateTrip(session.id, { status: 'confirmed', bookingCode });
 
-        await streamText(`🎉 **Reserva confirmada!**\n\n📋 Código da reserva: **${booking.bookingId}**\n\n`);
-        if (session.trip.flight) {
-          await streamText(`✈️ ${session.trip.flight.airline} ${session.trip.flight.flightNumber}\n`);
-        }
-        if (session.trip.hotel) {
-          await streamText(`🏨 ${session.trip.hotel.name}\n\n`);
-        }
-        await streamText(`A reserva foi enviada para aprovação. Você receberá uma confirmação por e-mail.\n\nPrecisa de mais alguma coisa?`);
+        // Populate bookingStore so the pass page can render the boarding pass
+        bookingStore.set(bookingCode, {
+          bookingCode,
+          origin: session.trip.flight?.origin || session.trip.origin || 'GRU',
+          originCity: session.trip.origin || 'São Paulo',
+          destination: session.trip.flight?.destination || session.trip.destination || 'GIG',
+          destCity: session.trip.destination || 'Rio de Janeiro',
+          flightNumber: session.trip.flight ? `${session.trip.flight.airline} ${session.trip.flight.flightNumber}` : 'N/A',
+          date: session.trip.departureDate || '',
+          time: session.trip.flight?.departureTime || '',
+          gate: 'A12',
+          seat: '14A',
+          passenger: 'Passageiro',
+          bookingClass: 'Economy',
+        });
+
+        await streamText(`Confirmação enviada para aprovação. Você receberá um e-mail em breve. Precisa de mais alguma coisa?`);
+
+        const flightPrice = session.trip.flight?.price ?? 0;
+        const hotelPrice = session.trip.hotel?.totalPrice ?? 0;
+        const airlineName = typeof session.trip.flight?.airline === 'object' && session.trip.flight?.airline !== null
+          ? (session.trip.flight.airline as unknown as { name: string }).name
+          : String(session.trip.flight?.airline || '');
+
+        callbacks.onBookingConfirmed({
+          bookingCode,
+          flight: session.trip.flight ? {
+            airline: airlineName,
+            flightNumber: String(session.trip.flight.flightNumber),
+            origin: session.trip.flight.origin,
+            destination: session.trip.flight.destination,
+            date: session.trip.departureDate || '',
+            price: flightPrice,
+          } : undefined,
+          hotel: session.trip.hotel ? {
+            name: session.trip.hotel.name,
+            checkin: session.trip.departureDate || '',
+            checkout: session.trip.returnDate || '',
+            nights: (session.trip.hotel as unknown as { nights?: number }).nights ?? 1,
+            price: hotelPrice,
+          } : undefined,
+          total: flightPrice + hotelPrice,
+        });
+
         break;
       }
 
@@ -534,7 +582,7 @@ async function claudeChat(session: Session, userMessage: string, timezone: strin
         for (const tool of toolUseBlocks) {
           const result = await executeTool(tool.name, tool.input, toolContext);
           callbacks.onToolResult(tool.name);
-          updateSessionFromToolResult(session, tool.name, tool.input, result);
+          updateSessionFromToolResult(session, tool.name, tool.input, result, callbacks);
 
           toolResults.push({
             type: 'tool_result',
@@ -577,12 +625,13 @@ function buildTripContext(session: Session): string {
   return parts.join('\n');
 }
 
-function updateSessionFromToolResult(session: Session, toolName: string, input: Record<string, unknown>, resultStr: string) {
+function updateSessionFromToolResult(session: Session, toolName: string, input: Record<string, unknown>, resultStr: string, callbacks: StreamCallback) {
   try {
     const result = JSON.parse(resultStr);
     if (!result.success) return;
 
     if (toolName === 'search_flights') {
+      const flights = result.results || [];
       sessionStore.updateTrip(session.id, {
         status: 'searching_flight',
         origin: input.origin as string,
@@ -590,17 +639,100 @@ function updateSessionFromToolResult(session: Session, toolName: string, input: 
         departureDate: input.departure_date as string,
         returnDate: input.return_date as string | undefined,
         passengers: input.passengers as number || 1,
-        lastFlightResults: result.results || [],
+        lastFlightResults: flights,
         destCityId: result._meta?.destCityId || session.trip.destCityId,
         destCityName: result._meta?.destCityName || session.trip.destCityName,
       });
+      callbacks.onFlightOptions(flights);
     } else if (toolName === 'search_hotels') {
+      const hotels = result.results || [];
       sessionStore.updateTrip(session.id, {
         status: 'searching_hotel',
-        lastHotelResults: result.results || [],
+        lastHotelResults: hotels,
       });
+      callbacks.onHotelOptions(hotels);
     } else if (toolName === 'create_booking') {
-      sessionStore.updateTrip(session.id, { status: 'confirmed' });
+      const bookingCode = (result.bookingId || result.booking_id || `BK-${Date.now()}`) as string;
+
+      // Resolve by ID or by the "hotel_N"/"flight_N" pattern Claude often invents
+      function resolveByIdOrIndex<T extends { id?: string }>(
+        results: T[], id: string | undefined
+      ): T | undefined {
+        if (!results.length) return undefined;
+        if (!id) return results[0];
+        // Exact match
+        const exact = results.find((r: any) => r.id === id || r._booking?.packageId === id);
+        if (exact) return exact;
+        // Pattern "hotel_N" or "flight_N" → use N-1 as index
+        const m = id.match(/^(?:hotel|flight|option)_?(\d+)$/i);
+        if (m) return results[Math.max(0, parseInt(m[1], 10) - 1)] ?? results[0];
+        // Fallback: first
+        return results[0];
+      }
+
+      const hotelId = input.hotel_id as string | undefined;
+      const resolvedHotel: HotelOption | undefined =
+        session.trip.hotel ||
+        resolveByIdOrIndex(session.trip.lastHotelResults || [], hotelId);
+
+      const flightId = input.flight_id as string | undefined;
+      const resolvedFlight: FlightOption | undefined =
+        session.trip.flight ||
+        resolveByIdOrIndex(session.trip.lastFlightResults || [], flightId);
+
+      sessionStore.updateTrip(session.id, {
+        status: 'confirmed',
+        bookingCode,
+        hotel: resolvedHotel,
+        flight: resolvedFlight,
+      });
+
+      const airlineName = typeof resolvedFlight?.airline === 'object' && resolvedFlight?.airline !== null
+        ? (resolvedFlight.airline as unknown as { name: string }).name
+        : String(resolvedFlight?.airline || '');
+
+      bookingStore.set(bookingCode, {
+        bookingCode,
+        origin: resolvedFlight?.origin || session.trip.origin || 'GRU',
+        originCity: session.trip.origin || 'São Paulo',
+        destination: resolvedFlight?.destination || session.trip.destination || 'GIG',
+        destCity: session.trip.destination || 'Rio de Janeiro',
+        flightNumber: resolvedFlight ? `${airlineName} ${resolvedFlight.flightNumber}` : 'N/A',
+        date: session.trip.departureDate || '',
+        time: resolvedFlight?.departureTime || '',
+        gate: 'A12',
+        seat: result.seat || '14A',
+        passenger: result.passenger || 'Passageiro',
+        bookingClass: 'Economy',
+      });
+
+      const flightPrice = resolvedFlight?.price ?? 0;
+      const hotelPrice = resolvedHotel?.totalPrice ?? 0;
+      const checkin = session.trip.departureDate || '';
+      const checkout = session.trip.returnDate || '';
+      const nights = checkin && checkout
+        ? Math.max(1, Math.round((new Date(checkout).getTime() - new Date(checkin).getTime()) / 86400000))
+        : 1;
+
+      callbacks.onBookingConfirmed({
+        bookingCode,
+        flight: resolvedFlight ? {
+          airline: airlineName,
+          flightNumber: String(resolvedFlight.flightNumber),
+          origin: resolvedFlight.origin,
+          destination: resolvedFlight.destination,
+          date: checkin,
+          price: flightPrice,
+        } : undefined,
+        hotel: resolvedHotel ? {
+          name: resolvedHotel.name,
+          checkin,
+          checkout,
+          nights,
+          price: hotelPrice,
+        } : undefined,
+        total: flightPrice + hotelPrice,
+      });
     }
   } catch {
     // ignore parse errors

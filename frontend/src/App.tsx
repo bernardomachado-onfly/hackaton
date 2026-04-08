@@ -22,6 +22,7 @@ export function App() {
     localStorage.getItem('ta_session_id'),
   );
   const [trip, setTrip] = useState<TripState | null>(null);
+  const [passUrl, setPassUrl] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,53 @@ export function App() {
           case 'tool_end':
             setActiveTool(null);
             break;
+          case 'pass_link':
+            if (event.url) setPassUrl(event.url);
+            break;
+          case 'flight_options':
+            if (event.flights && event.flights.length > 0) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, flightOptions: event.flights }
+                    : m,
+                ),
+              );
+            }
+            break;
+          case 'hotel_options':
+            if (event.hotels && event.hotels.length > 0) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, hotelOptions: event.hotels }
+                    : m,
+                ),
+              );
+            }
+            break;
+          case 'passenger_summary':
+            if (event.data) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, passengerSummary: event.data }
+                    : m,
+                ),
+              );
+            }
+            break;
+          case 'booking_confirmed':
+            if (event.booking) {
+              setMessages(prev =>
+                prev.map(m =>
+                  m.id === assistantId
+                    ? { ...m, bookingConfirmed: event.booking }
+                    : m,
+                ),
+              );
+            }
+            break;
           case 'done':
             if (event.trip) setTrip(event.trip);
             break;
@@ -98,9 +146,29 @@ export function App() {
       <Header trip={trip} />
       <main className={styles.messages}>
         {messages.map(msg => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            onSelect={msg.role === 'assistant' && !isLoading ? handleSend : undefined}
+          />
         ))}
         <ToolStatus tool={activeTool} />
+        {passUrl && (
+          <a
+            href={passUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              alignSelf: 'center', background: '#000', color: '#fff',
+              borderRadius: '14px', padding: '14px 22px', textDecoration: 'none',
+              fontWeight: 600, fontSize: '15px', margin: '8px 0',
+              boxShadow: '0 4px 16px rgba(0,0,0,.25)',
+            }}
+          >
+            🎫 Ver Boarding Pass
+          </a>
+        )}
         <div ref={messagesEndRef} />
       </main>
       <InputBar onSend={handleSend} disabled={isLoading} />
